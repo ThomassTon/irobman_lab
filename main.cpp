@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
     const auto plan = plan_single_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
 
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
-    visualize_plan(C, plan, true, "video/bin_picking/single_arm");
+    visualize_plan(C, plan, save_video, "video/bin_picking/single_arm");
   }
 
   else if (mode == "test") {
