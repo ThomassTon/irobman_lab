@@ -1,19 +1,23 @@
 #pragma once
 
 void setActive(rai::Configuration &C,
-               const std::vector<std::string> &prefixes) {
+               const std::vector<std::string> &prefixes)
+{
   FrameL roots;
-  for (const auto &prefix : prefixes) {
+  for (const auto &prefix : prefixes)
+  {
     roots.append(C.getFrame(STRING(prefix << "base")));
   }
   C.selectJointsBySubtrees(roots);
 }
 
-void setActive(rai::Configuration &C, const std::string &prefix) {
+void setActive(rai::Configuration &C, const std::string &prefix)
+{
   setActive(C, std::vector<std::string>{prefix});
 }
 
-void labSetting(rai::Configuration &C) {
+void labSetting(rai::Configuration &C)
+{
   auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
   base->setPosition({0., 0., .5});
@@ -23,7 +27,8 @@ void labSetting(rai::Configuration &C) {
 
   const arrA basePos = {{-.4, -.3, 0.00}, {.4, -.3, 0.0}, {.0, .6, 0.15}};
 
-  for (uint i = 0; i < 2; i++) {
+  for (uint i = 0; i < 2; i++)
+  {
     auto *a = C.addFile("./in/franka.g");
     C.reconfigureRoot(a, true);
     a->linkFrom(C["table"]);
@@ -36,7 +41,8 @@ void labSetting(rai::Configuration &C) {
   }
 }
 
-void more_robots(rai::Configuration &C, const uint n = 2) {
+void more_robots(rai::Configuration &C, const uint n = 2)
+{
   auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
   base->setPosition({0., 0., .5});
@@ -53,7 +59,8 @@ void more_robots(rai::Configuration &C, const uint n = 2) {
       {-0.383, 0, 0, 0.924},
   };
 
-  for (uint i = 0; i < n; i++) {
+  for (uint i = 0; i < n; i++)
+  {
     auto *a = C.addFile("./in/franka.g");
     C.reconfigureRoot(a, true);
     a->linkFrom(C["table"]);
@@ -75,7 +82,8 @@ void more_robots(rai::Configuration &C, const uint n = 2) {
   }
 }
 
-void pick_and_place(rai::Configuration &C) {
+void pick_and_place(rai::Configuration &C)
+{
   auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
   base->setPosition({0., 0., .5});
@@ -92,7 +100,8 @@ void pick_and_place(rai::Configuration &C) {
       {-0.383, 0, 0, 0.924},
   };
 
-  for (uint i = 0; i < 2; i++) {
+  for (uint i = 0; i < 2; i++)
+  {
     auto *a = C.addFile("./in/franka.g");
     C.reconfigureRoot(a, true);
     a->linkFrom(C["table"]);
@@ -113,15 +122,14 @@ void pick_and_place(rai::Configuration &C) {
 
   // C.watch(true);
 }
-
-void pick_and_place_single_arm(rai::Configuration &C) {
+void pick_and_place_cooperation(rai::Configuration &C)
+{
   auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
   base->setPosition({0., 0., .5});
   base->setContact(0.);
 
-  C.addFile("./in/table_pick_place_test_1.g");
-
+  C.addFile("./in/cooperation.g");
 
   const arrA basePos = {{-.5, -.1, 0.00}, {.5, .1, 0.0}, {.0, .6, 0.15}};
 
@@ -132,7 +140,8 @@ void pick_and_place_single_arm(rai::Configuration &C) {
       {-0.383, 0, 0, 0.924},
   };
 
-  for (uint i = 0; i < 1; i++) {
+  for (uint i = 0; i < 2; i++)   // change arm count
+  {
     auto *a = C.addFile("./in/franka.g");
     C.reconfigureRoot(a, true);
     a->linkFrom(C["table"]);
@@ -150,8 +159,46 @@ void pick_and_place_single_arm(rai::Configuration &C) {
     // state(3) += 0.25;
     C.setJointState(state);
   }
-  
+}
+
+void pick_and_place_single_arm(rai::Configuration &C)
+{
+  auto *base = C.addFrame("world", "");
+  base->setShape(rai::ST_marker, {0.001});
+  base->setPosition({0., 0., .5});
+  base->setContact(0.);
+
+  C.addFile("./in/table_pick_place_test_1.g");
+
+  const arrA basePos = {{-.5, -.1, 0.00}, {.5, .1, 0.0}, {.0, .6, 0.15}};
+
+  const arrA baseQuat = {
+      {1, 0, 0, 0},
+      {0, 0, 0, 1},
+      {0.924, 0, 0, -0.383},
+      {-0.383, 0, 0, 0.924},
+  };
+
+  for (uint i = 0; i < 1; i++)
+  {
+    auto *a = C.addFile("./in/franka.g");
+    C.reconfigureRoot(a, true);
+    a->linkFrom(C["table"]);
+
+    const rai::String prefix = STRING('a' << i << '_');
+    a->prefixSubtree(prefix);
+
+    const rai::String agentBase = STRING(prefix << "base");
+    C[agentBase]->setRelativePosition(basePos(i));
+    C[agentBase]->setQuaternion(baseQuat(i));
+
+    setActive(C, std::string(prefix.p));
+    arr state = C.getJointState();
+    // state(1) -= 0.25;
+    // state(3) += 0.25;
+    C.setJointState(state);
   }
+}
 
 arr center(arr pts) { return pts; }
 
@@ -161,11 +208,13 @@ std::map<uint, arr>
 overlappingCircles(const uint n1 = 25, const uint n2 = 25,
                    const double r1 = 0.05, const double r2 = 0.05,
                    const double x1 = -0.03, const double x2 = 0.03,
-                   const double y1 = 0, const double y2 = 0) {
+                   const double y1 = 0, const double y2 = 0)
+{
   std::map<uint, arr> res;
   arr pts;
 
-  for (uint i = 0; i < n1; ++i) {
+  for (uint i = 0; i < n1; ++i)
+  {
     const arr pt = {x1 + r1 * sin(2. * i / n1 * 3.1415),
                     y1 + r1 * cos(2. * i / n1 * 3.1415)};
     pts.append(pt);
@@ -174,7 +223,8 @@ overlappingCircles(const uint n1 = 25, const uint n2 = 25,
   res[0] = pts;
 
   pts.clear();
-  for (uint i = 0; i < n2; ++i) {
+  for (uint i = 0; i < n2; ++i)
+  {
     const arr pt = {x2 + r2 * sin(2. * i / n2 * 3.1415),
                     y2 + r2 * cos(2. * i / n2 * 3.1415)};
     pts.append(pt);
@@ -186,10 +236,13 @@ overlappingCircles(const uint n1 = 25, const uint n2 = 25,
 }
 
 arr grid(const uint nx = 5, const uint ny = 5, const double x = 0.3,
-         const double y = 0.3) {
+         const double y = 0.3)
+{
   arr pts;
-  for (uint i = 0; i < nx; ++i) {
-    for (uint j = 0; j < ny; ++j) {
+  for (uint i = 0; i < nx; ++i)
+  {
+    for (uint j = 0; j < ny; ++j)
+    {
       const arr point = {1. * i / (nx - 1) * x - x / 2,
                          1. * j / (ny - 1) * y - y / 2};
       pts.append(point);
@@ -200,13 +253,16 @@ arr grid(const uint nx = 5, const uint ny = 5, const double x = 0.3,
   return pts;
 }
 
-arr greedy_counterexample(){
+arr greedy_counterexample()
+{
   return grid(2, 2, 0.01, 0.4);
 }
 
-arr spiral(const uint n = 20) {
+arr spiral(const uint n = 20)
+{
   arr pts;
-  for (uint i = 0; i < n; ++i) {
+  for (uint i = 0; i < n; ++i)
+  {
     const arr pt = {0.25 * (i + 1) / n * sin(i * 2 / 3.1415),
                     0.25 * (i + 1) / n * cos(i * 2 / 3.1415)};
     pts.append(pt);
@@ -216,15 +272,18 @@ arr spiral(const uint n = 20) {
   return pts;
 }
 
-arr circles(const double x = 0.25, const uint num = 8) {
+arr circles(const double x = 0.25, const uint num = 8)
+{
   arr pts;
-  for (uint j = 0; j < num + 1; ++j) {
+  for (uint j = 0; j < num + 1; ++j)
+  {
     double r = 0.5 * x * (1. - 1. * j * j / (num * num));
     uint n = (num - j) * (num - j) + 1;
     double phi = (rand() % 1000) / 1000.;
 
     // std::cout << r << " " << n << std::endl;
-    for (uint i = 0; i < n; ++i) {
+    for (uint i = 0; i < n; ++i)
+    {
       const arr pt = {r * sin(phi + i * 2 * 3.1415 / n),
                       r * cos(phi + i * 2 * 3.1415 / n)};
       pts.append(pt);
@@ -235,7 +294,8 @@ arr circles(const double x = 0.25, const uint num = 8) {
   return pts;
 }
 
-arr cube(const uint n = 200) {
+arr cube(const uint n = 200)
+{
   arr v = {1, 1, 1};
   v = v / length(v);
 
@@ -245,7 +305,8 @@ arr cube(const uint n = 200) {
   rai::Configuration C;
 
   arr pts;
-  for (uint i = 0; i < n; ++i) {
+  for (uint i = 0; i < n; ++i)
+  {
     arr pt(3, 1);
 
     rndUniform(pt, -1, 1);
@@ -279,9 +340,11 @@ arr cube(const uint n = 200) {
 }
 
 arr randomPts(const uint n = 20, const double lb = -0.1,
-              const double ub = 0.1) {
+              const double ub = 0.1)
+{
   arr pts;
-  for (uint i = 0; i < n; ++i) {
+  for (uint i = 0; i < n; ++i)
+  {
     arr pt(2);
     rndUniform(pt, lb, ub);
     pts.append(pt);
@@ -291,7 +354,8 @@ arr randomPts(const uint n = 20, const double lb = -0.1,
   return pts;
 }
 
-std::map<uint, arr> randomPtsMulti(const uint n1 = 20, const uint n2 = 20) {
+std::map<uint, arr> randomPtsMulti(const uint n1 = 20, const uint n2 = 20)
+{
   std::map<uint, arr> res;
 
   res[0] = randomPts(n1, -0.07, 0.05);
@@ -300,20 +364,24 @@ std::map<uint, arr> randomPtsMulti(const uint n1 = 20, const uint n2 = 20) {
   return res;
 }
 
-arr LISlogo(bool large=false) {
+arr LISlogo(bool large = false)
+{
   arr pts;
   pts << FILE("./in/lis.txt");
 
-  if(!large){
+  if (!large)
+  {
     pts = pts / 10000.;
   }
 
   // pts = pts + 0.25;
 
-  if (large){
+  if (large)
+  {
     pts = pts / 2500.;
 
-    for (uint i=0; i<pts.d0; ++i){
+    for (uint i = 0; i < pts.d0; ++i)
+    {
       pts(i, 0) += 0.15;
       pts(i, 1) -= 0.1;
     }
@@ -324,7 +392,8 @@ arr LISlogo(bool large=false) {
   return pts;
 }
 
-std::map<uint, arr> LISlogoMulti() {
+std::map<uint, arr> LISlogoMulti()
+{
   arr pts1;
   pts1 << FILE("./in/lis_multi_1.txt");
 
@@ -337,11 +406,13 @@ std::map<uint, arr> LISlogoMulti() {
   double x = 0.15;
   double y = -0.1;
 
-  for (uint i = 0; i < pts1.d0; ++i) {
+  for (uint i = 0; i < pts1.d0; ++i)
+  {
     pts1(i, 0) += x;
     pts1(i, 1) += y;
   }
-  for (uint i = 0; i < pts2.d0; ++i) {
+  for (uint i = 0; i < pts2.d0; ++i)
+  {
     pts2(i, 0) += x;
     pts2(i, 1) += y;
   }
@@ -357,38 +428,66 @@ std::map<uint, arr> LISlogoMulti() {
 }
 
 // Scenario for stippling
-arr get_scenario(const rai::String &str) {
+arr get_scenario(const rai::String &str)
+{
   // const arr pts = grid(2, 2, 0.4, 0.1);
   // const arr pts = grid(2, 3, 0.4, 0.1);
 
   arr pts;
-  if (str == "default_grid") {
+  if (str == "default_grid")
+  {
     pts = grid();
-  } else if (str == "four_by_four_grid") {
+  }
+  else if (str == "four_by_four_grid")
+  {
     pts = grid(4, 4);
-  } else if (str == "three_by_three_grid") {
+  }
+  else if (str == "three_by_three_grid")
+  {
     pts = grid(3, 3);
-  } else if (str == "three_by_two_grid") {
+  }
+  else if (str == "three_by_two_grid")
+  {
     pts = grid(3, 2);
-  } else if (str == "spiral") {
+  }
+  else if (str == "spiral")
+  {
     pts = spiral();
-  } else if (str == "random") {
+  }
+  else if (str == "random")
+  {
     pts = randomPts();
-  } else if (str == "cube") {
+  }
+  else if (str == "cube")
+  {
     pts = cube(200);
-  } else if (str == "circles") {
+  }
+  else if (str == "circles")
+  {
     pts = circles(0.3, 7);
-  } else if (str == "lis_default") {
+  }
+  else if (str == "lis_default")
+  {
     pts = LISlogo(false);
-  } else if (str == "lis_large") {
+  }
+  else if (str == "lis_large")
+  {
     pts = LISlogo(true);
-  } else if (str == "greedy_counterexample") {
+  }
+  else if (str == "greedy_counterexample")
+  {
     pts = greedy_counterexample();
-  } else if (str == "four_robot_test_1") {
+  }
+  else if (str == "four_robot_test_1")
+  {
     pts = grid(2, 2, 0.05, 0.05);
-  } else if (str == "four_robot_test_2") {
+  }
+  else if (str == "four_robot_test_2")
+  {
     pts = grid(2, 2, 0.7, 0.05);
-  } else {
+  }
+  else
+  {
     std::cout << "Scenario not found" << std::endl;
   }
 

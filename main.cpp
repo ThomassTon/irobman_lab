@@ -58,17 +58,24 @@ int main(int argc, char **argv) {
   const uint seed = rai::getParameter<double>("seed", 42); // seed
   rnd.seed(seed);
 
+
+
   const uint verbosity = rai::getParameter<double>(
       "verbosity", 1); // verbosity, does not do anything atm
+
+  const bool save_video = rai::getParameter<bool>("save_video", false);
 
   const bool plan_pick_and_place =
       rai::getParameter<bool>("pnp", true); // pick and place yes/no
 
   const bool plan_pick_and_place_single_arm =
-    rai::getParameter<bool>("pnp", true); // pick and place yes/no
+    rai::getParameter<bool>("pnps",false); // pick and place yes/no
+
+  const bool plan_pick_and_place_cooperation =
+    rai::getParameter<bool>("pnpc",true); 
 
   const rai::String mode =
-      rai::getParameter<rai::String>("mode", "single_arm"); // test, greedy_random_search, show_plan
+      rai::getParameter<rai::String>("mode", "cooperation"); // test, greedy_random_search, show_plan
   const rai::String stippling_scenario =
       rai::getParameter<rai::String>("stippling_pts", "lis_default"); // lis_default, four_by_four_grid, default_grid
 
@@ -82,6 +89,11 @@ int main(int argc, char **argv) {
     pick_and_place_single_arm(C);
 
     robots = {"a0_"};
+  }
+  else if(plan_pick_and_place_cooperation){
+    pick_and_place_cooperation(C);
+
+    robots = {"a0_", "a1_"};   
   }
   else if (plan_pick_and_place) {
     pick_and_place(C);
@@ -125,17 +137,24 @@ int main(int argc, char **argv) {
   } else {
     // bin picking
     std::cout << "Computing pick and place poses" << std::endl;
-    robot_task_pose_mapping = compute_pick_and_place_positions(C, robots,5);
+    robot_task_pose_mapping = compute_pick_and_place_positions(C, robots,1);  // change box number
   }
 
   // initial test
-  bool save_video = false;
+  // bool save_video = false;
 
   if(mode=="single_arm"){
     const auto plan = plan_single_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
 
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
     visualize_plan(C, plan, save_video, "video/bin_picking/single_arm");
+  }
+
+  else if(mode =="cooperation"){
+    const auto plan = plan_cooperation_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
+
+    std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
+    visualize_plan(C, plan, save_video, "video/bin_picking/cooperation");
   }
 
   else if (mode == "test") {
