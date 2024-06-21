@@ -432,7 +432,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
             // r0_1 = arr(0.2,-0.1,0.0);
             // r0_1(0)=0.2;
             // r0_1(1) = -0.1;
-            // r0_1(2) = 0.0;
+            // r0_1(2) = -0.05;
             // std::cout<<get_trans_position(r0_b, rotationmantix, r0_1);
           }
           // to->unLink();
