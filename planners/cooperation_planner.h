@@ -31,9 +31,35 @@ auto get_position(rai::Configuration &C, const std::string &robot, const arr &po
   komo.add_jointLimits(true, 0., 1e1);
 
   auto pen_tip = STRING(robot << "pen_tip");
+  auto waypoint = STRING("waypoint");
+  Skeleton S = {
+        {1., 1., SY_touch, {pen_tip, waypoint}},
+        // {1., 1., SY_stable, {pen_tip, waypoint}},
+  //       // {2., 2., SY_poseEq, {obj, goal}},
+    };
 
+    komo.setSkeleton(S);
 
-  komo.addObjective({1.},FS_positionDiff,{STRING(robot << "pen_tip"), "waypoint"},OT_ineq,{1e1});
+    // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
+    // OT_eq,
+    //                  {1e2}, point);
+    // komo.addObjective({1., 1.}, FS_distance, {STRING(prefix << "pen_tip"),
+    // STRING(obj << i + 1)}, OT_eq, {1e1});
+
+    // komo.addObjective({1.}, FS_vectorZ, {STRING(robot << "pen")}, OT_sos,
+                      // {1e1}, {0., 0., -1.});
+    // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
+    // OT_sos, {1e0}, C[obj]->getPosition());
+
+    // komo.addObjective({1.}, FS_vectorZ, {STRING(prefix << "pen")}, OT_sos,
+    // {1e1}, {0., 0., -1.}); komo.addObjective({1.}, FS_vectorZDiff,
+    // {STRING(prefix << "pen"), "world"}, OT_ineq, {1e1}, {0., 0., -0.9});
+    // ConfigurationProblem cp(komo.world);
+    // setActive(cp.C, robot);
+  komo.addObjective({1.},FS_positionDiff,{STRING(robot << "pen_tip"), "waypoint"},OT_eq,{1e1});
+  // komo.addObjective({1.},FS_position,{STRING(robot << "pen_tip"), "waypoint"},OT_eq,{}, pos);
+
+          // addObjective({s.phase0-.1,s.phase0+.1}, FS_position, {s.frames(0)}, OT_eq, {}, {0.,0.,.1}, 2);
 
   // komo.addObjective({1.}, FS_vectorZ, {STRING(robot << "pen")}, OT_sos,
                     // {1e1}, {0., 0., -1.});
@@ -147,6 +173,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
   arr rotationmantix;
   arr r0_b;
   arr r0_1;
+  // r0_1.append(0.2, -0.1 ,0.0);
 
   for (uint j = 0; j < rtpm.at(_robot)[_task].size(); ++j) {
     uint prev_finishing_time = 0;
@@ -266,11 +293,12 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
       // set configuration to plannable for current robot
       std::cout << "setting up C" << std::endl;
       setActive(CPlanner, robot);
-      setActive(CTest,robot);
+      setActive(CTest,sequence[0].first);
 
       
       auto path = plan_in_animation(A, CPlanner, start_time, start_pose,goal_pose, time_lb, robot, false);
-    
+         std::cout<<"path_1"<<path.path<<"\n";
+   
       // std::cout<<"goal pose: "<<goal_pose<<"\n\n\n\n\n\n";
       if(j==1&&i==1){
         // for(auto r0b :paths[sequence[0].first].back().path){
@@ -281,37 +309,56 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
         // }
 
         // auto r0b = paths[sequence[0].first].back().path[-1];
-        uint size_of_path =  paths[sequence[0].first][0].path.N /7;
-        for(int i = 0; i++; i<size_of_path){
-          auto r0b = paths[sequence[0].first].back().path[i];
+        uint size_of_path =  paths[sequence[0].first].back().path.N /7;
+        std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
+        arr t_a1;
+        arr path_a1(0u,path.path.d1);
+            // arr p(0u, path.d1);
+
+        for(uint i = 0; i<size_of_path; i++){
+          auto r0b = paths[sequence[0].first][1].path[i];
+          auto t = paths[sequence[0].first].back().t(i);
           CTest.setJointState(r0b);
-          const auto pen_tip = STRING(robot << "pen_tip");
+          const auto pen_tip =  STRING(sequence[0].first << "pen_tip");
           auto _r0_b = CTest[pen_tip]->getPosition();
+          // std::cout<<"box pose air:"<<_r0_b<<"\n\n\n\n\n\n";
           auto rotationmatrix = CTest[pen_tip]->getRotationMatrix();
           auto _goal_pose = get_trans_position(_r0_b,rotationmatrix,r0_1);
-          std::cout<<"get the goal point :"<<_goal_pose<<"\n\n\n";
-
-          auto goal_pose= get_position(CPlanner,robot,_goal_pose);
-          path = plan_in_animation(A, CPlanner, start_time, start_pose, goal_pose, time_lb, robot, false);
-          std::cout<<"path size"<<path.path.sizeT<<"\n\n\n\n\n\n";
+          auto goal_pose_= get_position(CPlanner,robot,_goal_pose);
+          CPlanner.setJointState(goal_pose);
+          t_a1.append(t);
+          path_a1.append(goal_pose_);
+          // Ta
+          // std::cout<<"path size"<<path.path.sizeT<<"\n\n\n\n\n\n";
         }
-        std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
-        // std::cout<<"robot a0 path. d: "<<paths[sequence[0].first].back().path.nd<<"\n\n";
 
-        // std::cout<<"robot a0 path: "<<paths[sequence[0].first].back().path<<"\n\n";
-        CTest.setJointState(r0b);
-        const auto pen_tip = STRING(robot << "pen_tip");
-        auto _r0_b = CTest[pen_tip]->getPosition();
-      std::cout<<"get the rob point :"<<_r0_b<<"\n\n\n";
+        // path = plan_in_animation(A, CPlanner, start_time, start_pose,goal_pose_, time_lb, robot, false);
+        // std::cout<<"path_a1"<<path_a1<<"\n";
+        // std::cout<<"path_a1_"<<path.path<<"\n";
+        // std::cout<<"path_a1_t"<<path.t<<"\n";
 
-        auto rotationmatrix = CTest[pen_tip]->getRotationMatrix();
-        auto _goal_pose = get_trans_position(_r0_b,rotationmatrix,r0_1);
-        std::cout<<"get the goal point :"<<_goal_pose<<"\n\n\n";
+        TaskPart path_(t_a1,path_a1);
+        path_.has_solution=true;
+        path = path_;
 
-        auto goal_pose= get_position(CPlanner,robot,_goal_pose);
-        path = plan_in_animation(A, CPlanner, start_time, start_pose,
-                                    goal_pose, time_lb, robot, false);
-        std::cout<<"path size"<<path.path.sizeT<<"\n\n\n\n\n\n";
+        // std::cout<<"path_a1"<<path_a1<<"\n";
+      //   std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
+      //   // std::cout<<"robot a0 path. d: "<<paths[sequence[0].first].back().path.nd<<"\n\n";
+
+      //   // std::cout<<"robot a0 path: "<<paths[sequence[0].first].back().path<<"\n\n";
+      //   CTest.setJointState(r0b);
+      //   const auto pen_tip = STRING(robot << "pen_tip");
+      //   auto _r0_b = CTest[pen_tip]->getPosition();
+      // std::cout<<"get the rob point :"<<_r0_b<<"\n\n\n";
+
+      //   auto rotationmatrix = CTest[pen_tip]->getRotationMatrix();
+      //   auto _goal_pose = get_trans_position(_r0_b,rotationmatrix,r0_1);
+      //   std::cout<<"get the goal point :"<<_goal_pose<<"\n\n\n";
+
+      //   auto goal_pose= get_position(CPlanner,robot,_goal_pose);
+      //   path = plan_in_animation(A, CPlanner, start_time, start_pose,
+      //                               goal_pose, time_lb, robot, false);
+      //   std::cout<<"path size"<<path.path.sizeT<<"\n\n\n\n\n\n";
 
       }
       // std::cout<<"path"<<path.path<<"\n\n\n\n\n\n";
@@ -323,15 +370,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
       path.name = "task";
 
       if (path.has_solution) {
-        if (false) {
-          for (uint i = 0; i < path.path.d0; ++i) {
-            auto q = path.path[i];
-            CPlanner.setJointState(q);
-            CPlanner.watch(false);
-            rai::wait(0.01);
-          }
-          CPlanner.setJointState(home_poses.at(robot));
-        }
+
         // make animation part
         auto tmp_frames = robot_frames[robot];
         // add obj. frame to the anim-part.
@@ -381,10 +420,19 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
             to->linkFrom(from, true);
             r0_b =  CPlanner[pen_tip]->getPosition();
             rotationmantix = CPlanner[pen_tip]->getRotationMatrix();
-            std::cout<<"path size1 "<<paths[robot].back().path.sizeT<<"\n\n\n";
+            std::cout<<"penpos:   "<<rotationmantix<<"\n\n\n";
+
+            //  r0_b = CPlanner[obj]->getPosition();
+            // rotationmantix = CPlanner[obj]->getRotationMatrix();
+            // std::cout<<"boxpos:   "<<rotationmantix<<"\n\n\n";
           }
           else{
             r0_1 = get_r_0_1(r0_b,rotationmantix, CPlanner[pen_tip]->getPosition());
+            
+            // r0_1 = arr(0.2,-0.1,0.0);
+            // r0_1(0)=0.2;
+            // r0_1(1) = -0.1;
+            // r0_1(2) = 0.0;
             // std::cout<<get_trans_position(r0_b, rotationmantix, r0_1);
           }
           // to->unLink();
@@ -402,7 +450,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
               // create a new joint
             to->linkFrom(from, true);
 
-            std::cout<<"path size2 "<<paths[robot].back().path.sizeT<<"\n\n\n";
+            std::cout<<"path size2:::: "<<path.path.N<<"\n\n\n";
           }
           // to->unLink();
 
@@ -414,24 +462,9 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
       }
     }
 
-    std::cout << "planning exit path" << std::endl;
 
   }
 
-  if (false) {
-    rai::Animation A;
-    for (const auto &p : paths) {
-      for (const auto path : p.second) {
-        A.A.append(path.anim);
-      }
-    }
-
-    for (uint i = 0; i < A.getT(); ++i) {
-      A.setToTime(CPlanner, i);
-      CPlanner.watch(false);
-      rai::wait(0.1);
-    }
-  }
 
   return PlanResult(PlanStatus::success, paths);
 }
