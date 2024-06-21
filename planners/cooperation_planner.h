@@ -32,13 +32,13 @@ auto get_position(rai::Configuration &C, const std::string &robot, const arr &po
 
   auto pen_tip = STRING(robot << "pen_tip");
   auto waypoint = STRING("waypoint");
-  Skeleton S = {
-        {1., 1., SY_touch, {pen_tip, waypoint}},
-        // {1., 1., SY_stable, {pen_tip, waypoint}},
-  //       // {2., 2., SY_poseEq, {obj, goal}},
-    };
+  // Skeleton S = {
+  //       {1., 1., SY_touch, {pen_tip, waypoint}},
+  //       // {1., 1., SY_stable, {pen_tip, waypoint}},
+  // //       // {2., 2., SY_poseEq, {obj, goal}},
+  //   };
 
-    komo.setSkeleton(S);
+    // komo.setSkeleton(S);
 
     // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
     // OT_eq,
@@ -314,7 +314,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
         arr t_a1;
         arr path_a1(0u,path.path.d1);
             // arr p(0u, path.d1);
-
+        CPlanner.setJointState(paths[robot].back().path[-1]);
         for(uint i = 0; i<size_of_path; i++){
           auto r0b = paths[sequence[0].first][1].path[i];
           auto t = paths[sequence[0].first].back().t(i);
