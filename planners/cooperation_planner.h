@@ -12,9 +12,8 @@ auto get_position(rai::Configuration &C, const std::string &robot, const arr &po
   C.getFrame(STRING("waypoint"))->setShape(rai::ShapeType::ST_marker,size);
   C.getFrame(STRING("waypoint"))->setPosition(pos);
   setActive(C, robot);
-
   const auto home = C.getJointState();
-
+  // C.getFrameNames();
   OptOptions options;
   options.stopIters = 100;
   options.damping = 1e-3;
@@ -57,6 +56,7 @@ auto get_position(rai::Configuration &C, const std::string &robot, const arr &po
     // ConfigurationProblem cp(komo.world);
     // setActive(cp.C, robot);
   komo.addObjective({1.},FS_positionDiff,{STRING(robot << "pen_tip"), "waypoint"},OT_eq,{1e1});
+  // komo.addObjective({1.},FS_positionDiff,{STRING(robot << "pen_tip"), "waypoint"},OT_eq,{1e1})
   // komo.addObjective({1.},FS_position,{STRING(robot << "pen_tip"), "waypoint"},OT_eq,{}, pos);
 
           // addObjective({s.phase0-.1,s.phase0+.1}, FS_position, {s.frames(0)}, OT_eq, {}, {0.,0.,.1}, 2);
@@ -65,23 +65,37 @@ auto get_position(rai::Configuration &C, const std::string &robot, const arr &po
                     // {1e1}, {0., 0., -1.});
 
   ConfigurationProblem cp(komo.world);
+  cp.computeCollisions = true;
+  // cp.C.feature(FS_accumulatedCollisions,{});
   setActive(cp.C, robot);
-  const arr q;
+  arr q;
+  double min_cost=MAXFLOAT;
   for (uint i = 0; i < 20; ++i) {
     komo.run_prepare(0.0, true);
     komo.run(options);
+    komo.optimize();
+    // const double cost = komo.getCosts();
 
     const arr q0 = komo.getPath()[0]();
-
-
     // ensure via sampling as well
     const bool res1 = cp.query(q0)->isFeasible;
-    // const bool res2 = cp.query(q1)->isFeasible;
+    const uintA collision  = cp.query(q0)->collisions();
+    
+    // const auto collision2 =   cp.C.getCollisionExcludePairIDs();
 
+    // const bool res2 = cp.query(q1)->isFeasible;
     if (res1 && komo.getReport(false).get<double>("ineq") < 1. &&
-        komo.getReport(false).get<double>("eq") < 1.) {
+        komo.getReport(false).get<double>("eq") < 1. &&collision.N==0) {
+        // if (cost<min_cost)
+        // {
+        //   min_cost = cost;
+        //   q = q0;
+        // }
+        
+      // std::cout<<" collision:  "<<collision<<"\n";
       // rtpm[robot].push_back({q0, q1});
       // std::cout<<"q0 :"<<q0<<"   q1: "<<q1<<"\n\n\n\n";
+
       return q0;
       break;
     } else {
@@ -297,7 +311,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
 
       
       auto path = plan_in_animation(A, CPlanner, start_time, start_pose,goal_pose, time_lb, robot, false);
-         std::cout<<"path_1"<<path.path<<"\n";
+        //  std::cout<<"path_1"<<path.path<<"\n";
    
       // std::cout<<"goal pose: "<<goal_pose<<"\n\n\n\n\n\n";
       if(j==1&&i==1){
@@ -310,11 +324,11 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
 
         // auto r0b = paths[sequence[0].first].back().path[-1];
         uint size_of_path =  paths[sequence[0].first].back().path.N /7;
-        std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
+        // std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
         arr t_a1;
         arr path_a1(0u,path.path.d1);
             // arr p(0u, path.d1);
-        CPlanner.setJointState(paths[robot].back().path[-1]);
+        CPlanner.setJointState(paths[robot][0].path[-1]);
         for(uint i = 0; i<size_of_path; i++){
           auto r0b = paths[sequence[0].first][1].path[i];
           auto t = paths[sequence[0].first].back().t(i);
@@ -325,7 +339,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
           auto rotationmatrix = CTest[pen_tip]->getRotationMatrix();
           auto _goal_pose = get_trans_position(_r0_b,rotationmatrix,r0_1);
           auto goal_pose_= get_position(CPlanner,robot,_goal_pose);
-          CPlanner.setJointState(goal_pose);
+          CPlanner.setJointState(goal_pose_);
           t_a1.append(t);
           path_a1.append(goal_pose_);
           // Ta
@@ -341,24 +355,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
         path_.has_solution=true;
         path = path_;
 
-        // std::cout<<"path_a1"<<path_a1<<"\n";
-      //   std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
-      //   // std::cout<<"robot a0 path. d: "<<paths[sequence[0].first].back().path.nd<<"\n\n";
 
-      //   // std::cout<<"robot a0 path: "<<paths[sequence[0].first].back().path<<"\n\n";
-      //   CTest.setJointState(r0b);
-      //   const auto pen_tip = STRING(robot << "pen_tip");
-      //   auto _r0_b = CTest[pen_tip]->getPosition();
-      // std::cout<<"get the rob point :"<<_r0_b<<"\n\n\n";
-
-      //   auto rotationmatrix = CTest[pen_tip]->getRotationMatrix();
-      //   auto _goal_pose = get_trans_position(_r0_b,rotationmatrix,r0_1);
-      //   std::cout<<"get the goal point :"<<_goal_pose<<"\n\n\n";
-
-      //   auto goal_pose= get_position(CPlanner,robot,_goal_pose);
-      //   path = plan_in_animation(A, CPlanner, start_time, start_pose,
-      //                               goal_pose, time_lb, robot, false);
-      //   std::cout<<"path size"<<path.path.sizeT<<"\n\n\n\n\n\n";
 
       }
       // std::cout<<"path"<<path.path<<"\n\n\n\n\n\n";
