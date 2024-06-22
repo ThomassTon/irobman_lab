@@ -66,7 +66,7 @@ compute_pick_and_place_positions(rai::Configuration &C,
         const arr q0 = komo.getPath()[0]();
         const arr q1 = komo.getPath()[1]();
         // komo.pathConfig.watch(true);
-
+        std::cout<<"get path: "<<komo.getPath();
         // ensure via sampling as well
         const bool res1 = cp.query(q0)->isFeasible;
         const bool res2 = cp.query(q1)->isFeasible;

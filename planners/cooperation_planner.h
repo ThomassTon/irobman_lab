@@ -309,8 +309,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
       setActive(CPlanner, robot);
       setActive(CTest,sequence[0].first);
 
-      
-      auto path = plan_in_animation(A, CPlanner, start_time, start_pose,goal_pose, time_lb, robot, false);
+      TaskPart path;
         //  std::cout<<"path_1"<<path.path<<"\n";
    
       // std::cout<<"goal pose: "<<goal_pose<<"\n\n\n\n\n\n";
@@ -326,7 +325,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
         uint size_of_path =  paths[sequence[0].first].back().path.N /7;
         // std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
         arr t_a1;
-        arr path_a1(0u,path.path.d1);
+        arr path_a1(0u,paths[sequence[0].first].back().path.d1);
             // arr p(0u, path.d1);
         CPlanner.setJointState(paths[robot][0].path[-1]);
         for(uint i = 0; i<size_of_path; i++){
@@ -356,6 +355,10 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
         path = path_;
 
 
+
+      }
+      else{
+        path = plan_in_animation(A, CPlanner, start_time, start_pose,goal_pose, time_lb, robot, false);
 
       }
       // std::cout<<"path"<<path.path<<"\n\n\n\n\n\n";

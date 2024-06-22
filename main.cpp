@@ -26,6 +26,7 @@
 
 #include "samplers/pick_and_place_sampler.h"
 #include "samplers/stippling_sampler.h"
+#include "samplers/pick_and_place_sampler_collaboration.h"
 
 #include "planners/plan_in_animation.h"
 #include "planners/prioritized_planner.h"
@@ -107,7 +108,7 @@ int main(int argc, char **argv) {
       robots = {"a0_", "a1_", "a2_", "a3_"};
     }
   }
-  // C.watch(true);
+  C.watch(true);
 
   // maps [robot] to home_pose
   const std::map<Robot, arr> home_poses = get_robot_home_poses(C, robots);
@@ -137,7 +138,7 @@ int main(int argc, char **argv) {
   } else {
     // bin picking
     std::cout << "Computing pick and place poses" << std::endl;
-    robot_task_pose_mapping = compute_pick_and_place_positions_co(C, robots,1);  // change box number
+    robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,1);  // change box number
   }
 
   // initial test

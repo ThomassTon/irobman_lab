@@ -124,7 +124,7 @@ void pick_and_place(rai::Configuration &C)
 }
 void pick_and_place_cooperation(rai::Configuration &C)
 {
-  auto *base = C.addFrame("world", "");
+   auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
   base->setPosition({0., 0., .5});
   base->setContact(0.);
@@ -140,7 +140,7 @@ void pick_and_place_cooperation(rai::Configuration &C)
       {-0.383, 0, 0, 0.924},
   };
 
-  for (uint i = 0; i < 2; i++)   // change arm count
+  for (uint i = 0; i < 2; i++)
   {
     auto *a = C.addFile("./in/franka.g");
     C.reconfigureRoot(a, true);
@@ -159,6 +159,7 @@ void pick_and_place_cooperation(rai::Configuration &C)
     // state(3) += 0.25;
     C.setJointState(state);
   }
+
 }
 
 void pick_and_place_single_arm(rai::Configuration &C)
