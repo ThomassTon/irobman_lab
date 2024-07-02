@@ -39,7 +39,7 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
             {1., 1., SY_touch, {pen_tip_0, obj}},
             {1., 1., SY_touch, {pen_tip_1, obj}},
             {1., 2., SY_stable, {pen_tip_0, obj}},
-            {1., 2., SY_stable, {pen_tip_1, obj}},
+            // {2., 2., SY_touch, {pen_tip_1, goal}},
             {2., 2., SY_poseEq, {obj, goal}},
         };
 
@@ -55,6 +55,11 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
         komo.addObjective({1.}, FS_vectorZ, {STRING(robots[1] << "pen")}, OT_sos, {1e1}, {0., 0., -1.});
         komo.addObjective({1.,1.}, FS_distance, {obj, STRING(robots[0] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
         komo.addObjective({1.,1.}, FS_distance, {"table", STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.1}); 
+
+        // komo.addObjective({1.}, FS_distance, {obj, STRING(robots[0] << "pen_tip")}, OT_ineq, {1e1}, {-0.0}); 
+        // komo.addObjective({1.}, FS_distance, {obj, STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
+        // komo.addObjective({2.}, FS_distance, {goal, STRING(robots[0] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
+        // komo.addObjective({2.}, FS_distance, {goal, STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
         // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
         // OT_sos, {1e0}, C[obj]->getPosition());
 

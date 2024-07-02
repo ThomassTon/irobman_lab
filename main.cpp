@@ -70,13 +70,13 @@ int main(int argc, char **argv) {
       rai::getParameter<bool>("pnp", true); // pick and place yes/no
 
   const bool plan_pick_and_place_single_arm =
-    rai::getParameter<bool>("pnps",false); // pick and place yes/no
+    rai::getParameter<bool>("pnps",true); // pick and place yes/no
 
   const bool plan_pick_and_place_cooperation =
-    rai::getParameter<bool>("pnpc",true); 
+    rai::getParameter<bool>("pnpc",false); 
 
   const rai::String mode =
-      rai::getParameter<rai::String>("mode", "cooperation"); // test, greedy_random_search, show_plan
+      rai::getParameter<rai::String>("mode", "single_arm"); // test, greedy_random_search, show_plan
   const rai::String stippling_scenario =
       rai::getParameter<rai::String>("stippling_pts", "lis_default"); // lis_default, four_by_four_grid, default_grid
 
@@ -108,7 +108,6 @@ int main(int argc, char **argv) {
       robots = {"a0_", "a1_", "a2_", "a3_"};
     }
   }
-  C.watch(true);
 
   // maps [robot] to home_pose
   const std::map<Robot, arr> home_poses = get_robot_home_poses(C, robots);
@@ -138,7 +137,8 @@ int main(int argc, char **argv) {
   } else {
     // bin picking
     std::cout << "Computing pick and place poses" << std::endl;
-    robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,1);  // change box number
+    // robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,1);  // change box number
+    robot_task_pose_mapping = compute_pick_and_place_positions(C, robots,5);
   }
 
   // initial test
@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
     const auto plan = plan_single_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
 
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
-    visualize_plan(C, plan, save_video, "video/bin_picking/single_arm");
+    visualize_plan(C, plan, save_video, "video/bin_picking/singlearm");
   }
 
   else if(mode =="cooperation"){
