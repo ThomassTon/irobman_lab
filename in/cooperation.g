@@ -20,7 +20,7 @@ _wall5 (bin2){ type:ssBox, size:[0.05 0.45 0.1 .01], contact:1 Q:<[  -0.25, .0, 
 _wall6 (bin2){ type:ssBox, size:[0.05 0.45 0.1 .01], contact:1 Q:<[  0.25, .0, 0.025, 1, 0, .0, 0]> color:[0.9, 0.9, 0.9, 1]}
 _wall7 (bin2){ type:ssBox, size:[0.55 0.05 0.1 .01], contact:1 Q:<[  0.0, .25, 0.025, 1, 0, .0, 0]> color:[0.9, 0.9, 0.9, 1]}
 _wall8 (bin2){ type:ssBox, size:[0.55 0.05 0.1 .01], contact:1 Q:<[  0.0, -.25, 0.025, 1, 0, .0, 0]> color:[0.9, 0.9, 0.9, 1]}
-_obstacle (bin1){ type:ssBox, size:[0.1 0.1 0.1 .01], contact:1 Q:<[ -0, -0., 0.2, 1, 0, .0, 0]> color:[0.9, 0.9, 0.9, 1]}
+_obstacle (bin1){ type:ssBox, size:[0.1 0.1 0.1 .01], contact:1 Q:<[ -0, -0., 0.3, 1, 0, .0, 0]> color:[0.9, 0.9, 0.9, 1]}
 
 
 #goal1 (bin1){ joint:rigid type:ssBox, size:[0.25 0.2 0.1 .01], contact:0 Q:<[  0, 0.3, 0.3, 0.714, 0.714, .0, 0]> color:[0.4, 1, 1, 0.2]}
