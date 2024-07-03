@@ -11,6 +11,8 @@ arr plan_with_komo_given_horizon(const rai::Animation &A, rai::Configuration &C,
   options.stopIters = 100;
   options.damping = 1e-3;
   options.stopLineSteps = 5;
+  // auto obj = STRING("obj1");
+
 
   std::cout << "setting up komo" << std::endl;
   KOMO komo;
@@ -29,6 +31,7 @@ arr plan_with_komo_given_horizon(const rai::Animation &A, rai::Configuration &C,
 
   // make pen tip go a way from the table
   const double offset = 0.06;
+  // komo.addObjective({0,2}, FS_vectorZ, {obj}, OT_sos, {1e1}, {0,0,1});
   komo.addObjective({0.1, 0.9}, FS_distance,
                     {"table", STRING(prefix << "pen_tip")}, OT_ineq, {1e1},
                     {-offset});
@@ -479,6 +482,10 @@ TaskPart plan_in_animation(const rai::Animation &A, rai::Configuration &C,
         break;
       }
     }
+  }
+  if (komo_path.has_solution ) {
+    std::cout << "using komo" << std::endl;
+    return komo_path;
   }
 
   if (komo_path.has_solution && !rrt_path.has_solution) {

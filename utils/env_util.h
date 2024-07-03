@@ -129,9 +129,9 @@ void pick_and_place_cooperation(rai::Configuration &C)
   base->setPosition({0., 0., .5});
   base->setContact(0.);
 
-  C.addFile("./in/cooperation.g");
-
-  const arrA basePos = {{-.5, -.1, 0.00}, {.5, .1, 0.0}, {.0, .6, 0.15}};
+  // C.addFile("./in/cooperation.g");
+  C.addFile("./in/StackingAndTransporting.g");
+  const arrA basePos = {{-.7, 0.0, 0.00}, {.7, 0.0, 0.0}, {.0, .6, 0.15}};
 
   const arrA baseQuat = {
       {1, 0, 0, 0},
@@ -140,7 +140,7 @@ void pick_and_place_cooperation(rai::Configuration &C)
       {-0.383, 0, 0, 0.924},
   };
 
-  for (uint i = 0; i < 2; i++)
+  for (uint i = 0; i < 1; i++)
   {
     auto *a = C.addFile("./in/franka.g");
     C.reconfigureRoot(a, true);
