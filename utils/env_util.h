@@ -140,7 +140,7 @@ void pick_and_place_cooperation(rai::Configuration &C)
       {-0.383, 0, 0, 0.924},
   };
 
-  for (uint i = 0; i < 1; i++)
+  for (uint i = 0; i < 2; i++)
   {
     auto *a = C.addFile("./in/franka.g");
     C.reconfigureRoot(a, true);

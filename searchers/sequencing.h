@@ -31,7 +31,7 @@ TaskSequence generate_cooperation_sequence(const std::vector<Robot> &robots,
     // const uint r = rand() % robots.size();
     // make pair
     seq.push_back(std::make_pair(robots[0], i));
-    // seq.push_back(std::make_pair(robots[1], i));
+    seq.push_back(std::make_pair(robots[1], i));
 
   }
   return seq;
@@ -48,9 +48,9 @@ TaskSequence generate_single_arm_sequence(const std::vector<Robot> &robots,
     seq.push_back(std::make_pair(robots[r], i));
   }
 
-  auto rng = std::default_random_engine{
-      std::chrono::system_clock::now().time_since_epoch().count()};
-  std::shuffle(std::begin(seq), std::end(seq), rng);
+  // auto rng = std::default_random_engine{
+  //     std::chrono::system_clock::now().time_since_epoch().count()};
+  // std::shuffle(std::begin(seq), std::end(seq), rng);
 
   return seq;
 }
