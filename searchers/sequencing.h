@@ -29,17 +29,11 @@ TaskSequence generate_cooperation_sequence(const std::vector<Robot> &robots,
   for (uint i = 0; i < num_tasks; ++i) {
     // sample robot
     // const uint r = rand() % robots.size();
-    std::cout<<"num_tasks "<<num_tasks<<"\n\n\n\n\n\n";
     // make pair
     seq.push_back(std::make_pair(robots[0], i));
-    seq.push_back(std::make_pair(robots[1], i));
+    // seq.push_back(std::make_pair(robots[1], i));
 
   }
-
-  // auto rng = std::default_random_engine{
-  //     std::chrono::system_clock::now().time_since_epoch().count()};
-  // std::shuffle(std::begin(seq), std::end(seq), rng);
-
   return seq;
 }
 

@@ -3,9 +3,9 @@ irobman_lab
 
 # DEMOS
 
-| Single Arm |
-|---|
-<img src="./video/bin_picking/single_arm.gif" alt="005" style="zoom: 70%;" /> 
+| Single Arm |stacking|
+|---|---|
+<img src="./video/bin_picking/single_arm.gif" alt="005" style="zoom: 70%;" /> |<img src="./video/bin_picking/stacking_p.gif" alt="005" style="zoom: 70%;" />
 
 | collaboration | collaboration|
 |---|---|
