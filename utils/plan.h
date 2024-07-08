@@ -146,6 +146,92 @@ void visualize_plan(rai::Configuration C, const Plan &plan,
   }
 }
 
+void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
+                    const bool save = false, 
+                    const char* save_video_path = "video/") {
+  rai::Animation A;
+  for (const auto &p : plan) {
+    for (const auto path : p.second) {
+      A.A.append(path.anim);
+    }
+  }
+
+  rai::ConfigurationViewer Vf;
+  // Vf.setConfiguration(C, "\"Real World\"", true);
+  Vf.setConfiguration(C, "\"Real World\"", false);
+
+  const double makespan = get_makespan_from_plan(plan);
+
+  if (save) {
+      rai::system(STRING("mkdir -p " <<save_video_path));
+  }
+
+  for (uint t = 0; t < makespan; ++t) {
+    // A.setToTime(C, t);
+
+    // std::cout << t << std::endl;
+    for (const auto tp : plan) {
+      const auto r = tp.first;
+      const auto parts = tp.second;
+
+      bool done = false;
+      for (auto part : parts) {
+        // std::cout <<part.t(0) << " " << part.t(-1) << std::endl;
+        if (part.t(0) > t || part.t(-1) < t) {
+          continue;
+        }
+
+        for (uint i = 0; i < part.t.N - 1; ++i) {
+          if (part.t(i) <= t && part.t(i + 1) > t) {
+            setActive(C, r);
+            C.setJointState(part.path[i]);
+            // std::cout <<part.path[i] << std::endl;
+            done = true;
+
+            // set bin picking things
+            const auto task_index = part.task_index;
+            const auto obj_name = STRING("obj" << task_index + 1);
+            const auto obj1_name = STRING("obj" <<1);
+            const auto obj2_name = STRING("obj" <<2);
+
+            if (part.anim.frameNames.contains(obj_name)) {
+              const auto pose =
+                  part.anim.X[uint(std::floor(t - part.anim.start))];
+              arr tmp(1, 7);
+
+              if(task_index==1){
+                arr tmp1(1, 7),tmp2(1, 7);
+                tmp1[0]= pose[-1];    
+                tmp2[0]= pose[-2];
+                C.setFrameState(tmp1, {C[obj1_name]});
+                C.setFrameState(tmp2, {C[obj2_name]});
+              }
+              else{
+                tmp[0] = pose[-1];
+                C.setFrameState(tmp, {C[obj_name]});
+              }
+              
+            }
+            break;
+          }
+        }
+
+        if (done) {
+          break;
+        }
+      }
+    }
+
+    // C.watch(false);
+    Vf.setConfiguration(C, ".", false);
+    rai::wait(0.01);
+
+    if (save) {
+      Vf.savePng(save_video_path);
+    }
+  }
+}
+
 arr get_robot_pose_at_time(const uint t, const Robot r,
                            const std::map<Robot, arr> &home_poses,
                            const std::map<Robot, std::vector<TaskPart>> &plan) {
