@@ -154,7 +154,7 @@ int main(int argc, char **argv) {
     const auto plan = plan_cooperation_arm_stacking(C, robot_task_pose_mapping, home_poses);
 
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
-    visualize_plan(C, plan, save_video, "video/bin_picking/stacking");
+    visualize_plan_stacking(C, plan, save_video, "video/bin_picking/stacking");
   }
 
   else if(mode =="cooperation"){

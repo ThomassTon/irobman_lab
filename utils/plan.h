@@ -146,7 +146,6 @@ void visualize_plan(rai::Configuration C, const Plan &plan,
   }
 }
 
-
 void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
                     const bool save = false, 
                     const char* save_video_path = "video/") {
@@ -191,28 +190,26 @@ void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
 
             // set bin picking things
             const auto task_index = part.task_index;
-            const auto obj_name = STRING("obj" <<  task_index+1);
-
-            const auto obj1_name = STRING("obj" <<  1);
-            const auto obj2_name = STRING("obj" <<  2);
+            const auto obj_name = STRING("obj" << task_index + 1);
+            const auto obj1_name = STRING("obj" <<1);
+            const auto obj2_name = STRING("obj" <<2);
 
             if (part.anim.frameNames.contains(obj_name)) {
               const auto pose =
                   part.anim.X[uint(std::floor(t - part.anim.start))];
-              arr tmp(1, 7), tmp2(1, 7);
+              arr tmp(1, 7);
+
               if(task_index==1){
-                tmp[0] = pose[-1];
-                tmp2[0] = pose[-2];
-                C.setFrameState(tmp, {C[obj1_name]});
+                arr tmp1(1, 7),tmp2(1, 7);
+                tmp1[0]= pose[-1];    
+                tmp2[0]= pose[-2];
+                C.setFrameState(tmp1, {C[obj1_name]});
                 C.setFrameState(tmp2, {C[obj2_name]});
               }
               else{
                 tmp[0] = pose[-1];
-              // tmp2[0] = pose[-2];
                 C.setFrameState(tmp, {C[obj_name]});
               }
-             
-              // C.setFrameState(tmp2, {C[obj2_name]});
               
             }
             break;
@@ -234,7 +231,6 @@ void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
     }
   }
 }
-
 
 arr get_robot_pose_at_time(const uint t, const Robot r,
                            const std::map<Robot, arr> &home_poses,
