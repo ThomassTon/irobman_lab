@@ -80,7 +80,7 @@ arr plan_with_komo_given_horizon(const rai::Animation &A, rai::Configuration &C,
   eq = komo.getReport(false).get<double>("eq");
 
   // if (eq > 2 || ineq > 2){
-  komo.getReport(true);
+  komo.getReport(false);
   // komo.pathConfig.watch(true);
   //}
 
@@ -532,5 +532,7 @@ rai::Animation::AnimationPart make_animation_part(rai::Configuration &C,
     // C.watch(true);
     anim.X[i] = C.getFrameState(frames);
   }
+  // C.watch(true);
+
   return anim;
 }

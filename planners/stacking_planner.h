@@ -122,6 +122,11 @@ PlanResult plan_stacking_arms_given_subsequence_and_prev_plan(
           path.task_index = task;
           path.name = "task";
 
+          const auto obj1 = STRING("obj" <<  1);
+          auto to_obj1 = CPlanner[obj1];
+          const auto obj2 = STRING("obj" <<  2);
+          auto to_obj2 = CPlanner[obj2];
+
           if (path.has_solution) {
             // if (false) {
             //   for (uint i = 0; i < path.path.d0; ++i) {
@@ -138,12 +143,14 @@ PlanResult plan_stacking_arms_given_subsequence_and_prev_plan(
             if (is_bin_picking) {
               const auto obj = STRING("obj" << task + 1);
               auto to = CPlanner[obj];
-              tmp_frames.append(to);
-              if(task==1){
-                const auto obj = STRING("obj" << task);
-                auto to = CPlanner[obj];
-                tmp_frames.append(to);
-              }
+              tmp_frames.append(to_obj1);
+              tmp_frames.append(to_obj2);
+
+              // if(task==1){
+              //   const auto obj = STRING("obj" << task);
+              //   auto to = CPlanner[obj];
+              //   tmp_frames.append(to);
+              // }
 
             }
             const auto anim_part =
@@ -184,6 +191,7 @@ PlanResult plan_stacking_arms_given_subsequence_and_prev_plan(
                 to2->unLink();
 
                 to2->linkFrom(to,true);
+                // CPlanner.watch(true);
 
                 std::cout<<"obj2: child:  "<<to->children<<"  "<<to2<<"\n\n\n\n";
 
