@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
   } else {
     // bin picking
     std::cout << "Computing pick and place poses" << std::endl;
-    robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,1);  // change box number
+    robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,2);  // change box number
     // robot_task_pose_mapping = compute_pick_and_place_positions(C, robots,2);
   }
 

@@ -39,7 +39,7 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
             {1., 1., SY_touch, {pen_tip_0, obj}},
             {1., 1., SY_touch, {pen_tip_1, obj}},
             {1., 2., SY_stable, {pen_tip_0, obj}},
-            {1., 2., SY_stable, {pen_tip_1, obj}},
+            // {1., 2., SY_stable, {pen_tip_1, obj}},
             {2., 2., SY_poseEq, {obj, goal}},
         };
 
