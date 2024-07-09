@@ -122,7 +122,7 @@ void pick_and_place(rai::Configuration &C)
 
   // C.watch(true);
 }
-void pick_and_place_cooperation(rai::Configuration &C)
+void pick_and_place_cooperation(rai::Configuration &C, rai::String mode)
 {
    auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
@@ -130,7 +130,13 @@ void pick_and_place_cooperation(rai::Configuration &C)
   base->setContact(0.);
 
   // C.addFile("./in/cooperation.g");
-  C.addFile("./in/StackingAndTransporting.g");
+  if(mode=="stacking"||mode=="stacking_singlearm"){
+    C.addFile("./in/StackingAndTransporting.g");
+  }
+  else if(mode=="cooperation"){
+    C.addFile("./in/cooperation.g");
+  }
+    
   const arrA basePos = {{-.7, 0.0, 0.00}, {.7, 0.0, 0.0}, {.0, .6, 0.15}};
 
   const arrA baseQuat = {
@@ -162,14 +168,20 @@ void pick_and_place_cooperation(rai::Configuration &C)
 
 }
 
-void pick_and_place_single_arm(rai::Configuration &C)
+void pick_and_place_single_arm(rai::Configuration &C,rai::String mode )
 {
   auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
   base->setPosition({0., 0., .5});
   base->setContact(0.);
 
-  C.addFile("./in/table_pick_place_test_1.g");
+  if(mode=="stacking_singlearm"){
+    C.addFile("./in/StackingAndTransporting.g");
+  }
+  else{
+    C.addFile("./in/table_pick_place_test_1.g");
+  }
+  
 
   const arrA basePos = {{-.5, -.1, 0.00}, {.5, .1, 0.0}, {.0, .6, 0.15}};
 

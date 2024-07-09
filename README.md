@@ -1,5 +1,9 @@
 irobman_lab
 
+Execution single arm stacking with
+```
+./x.exe -pnps true -mode stacking_singlearm
+```
 
 # DEMOS
 
