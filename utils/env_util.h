@@ -133,8 +133,15 @@ void pick_and_place_cooperation(rai::Configuration &C, rai::String mode)
   if(mode=="stacking"||mode=="stacking_singlearm"){
     C.addFile("./in/StackingAndTransporting.g");
   }
-  else if(mode=="cooperation"){
-    C.addFile("./in/cooperation.g");
+  else if(mode=="collaboration_single_obj"){
+    C.addFile("./in/collaboration_single_obj.g");
+  }
+  else if(mode=="collaboration_single_obj_obstacle"){
+    C.addFile("./in/collaboration_single_obj_obstacle.g");
+  }
+  
+  else if(mode=="collaboration_single_obj_vertical"){
+    C.addFile("./in/collaboration_single_obj _vertical.g");
   }
     
   const arrA basePos = {{-.7, 0.0, 0.00}, {.7, 0.0, 0.0}, {.0, .6, 0.15}};
