@@ -503,7 +503,6 @@ TaskPart plan_in_animation(const rai::Animation &A, rai::Configuration &C,
     return komo_path;
   }
 
-  std::cout << "using rrt" << std::endl;
   return rrt_path;
 }
 
@@ -529,10 +528,8 @@ rai::Animation::AnimationPart make_animation_part(rai::Configuration &C,
   for (uint i = 0; i < path.d0; ++i) {
     q = path[i];
     C.setJointState(q);
-    // C.watch(true);
     anim.X[i] = C.getFrameState(frames);
   }
-  // C.watch(true);
 
   return anim;
 }

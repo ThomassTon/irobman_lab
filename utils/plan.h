@@ -96,7 +96,6 @@ void visualize_plan(rai::Configuration C, const Plan &plan,
   for (uint t = 0; t < makespan; ++t) {
     // A.setToTime(C, t);
 
-    // std::cout << t << std::endl;
     for (const auto tp : plan) {
       const auto r = tp.first;
       const auto parts = tp.second;
@@ -144,6 +143,8 @@ void visualize_plan(rai::Configuration C, const Plan &plan,
       Vf.savePng(save_video_path);
     }
   }
+  std::cout << "suveee" << std::endl;
+
 }
 
 void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
