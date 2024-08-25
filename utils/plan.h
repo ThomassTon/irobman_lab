@@ -149,7 +149,7 @@ void visualize_plan(rai::Configuration C, const Plan &plan,
 
 void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
                     const bool save = false, 
-                    const char* save_video_path = "video/") {
+                    const char* save_video_path = "video/", const uint obj_count=2) {
   rai::Animation A;
   for (const auto &p : plan) {
     for (const auto path : p.second) {
@@ -199,8 +199,7 @@ void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
               const auto pose =
                   part.anim.X[uint(std::floor(t - part.anim.start))];
               arr tmp(1, 7);
-
-              if(task_index==1){
+              if(true){
                 arr tmp1(1, 7),tmp2(1, 7);
                 tmp1[0]= pose[-1];    
                 tmp2[0]= pose[-2];
