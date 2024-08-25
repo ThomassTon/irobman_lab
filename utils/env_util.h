@@ -122,16 +122,21 @@ void pick_and_place(rai::Configuration &C)
 
   // C.watch(true);
 }
-void pick_and_place_cooperation(rai::Configuration &C, rai::String mode)
+void pick_and_place_collaboration(rai::Configuration &C, rai::String mode, uint obj_count = 1)
 {
    auto *base = C.addFrame("world", "");
   base->setShape(rai::ST_marker, {0.001});
   base->setPosition({0., 0., .5});
   base->setContact(0.);
-
   // C.addFile("./in/cooperation.g");
   if(mode=="stacking_collaboration"||mode=="stacking_singlearm"){
-    C.addFile("./in/StackingAndTransporting.g");
+    if(obj_count==2){
+      C.addFile("./in/StackingAndTransporting.g");
+    }
+    else if(obj_count==3){
+      C.addFile("./in/StackingAndTransporting_3objs.g");
+    }
+    
   }
   else if(mode=="collaboration_single_obj"){
     C.addFile("./in/collaboration_single_obj.g");
@@ -144,7 +149,7 @@ void pick_and_place_cooperation(rai::Configuration &C, rai::String mode)
     C.addFile("./in/collaboration_single_obj _vertical.g");
   }
     
-  const arrA basePos = {{-.7, 0.0, 0.00}, {.7, 0.0, 0.0}, {.0, .6, 0.15}};
+  const arrA basePos = {{-.8, 0.0, 0.00}, {.8, 0.0, 0.0}, {.0, .6, 0.15}};
 
   const arrA baseQuat = {
       {1, 0, 0, 0},

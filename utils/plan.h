@@ -149,7 +149,7 @@ void visualize_plan(rai::Configuration C, const Plan &plan,
 
 void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
                     const bool save = false, 
-                    const char* save_video_path = "video/", const uint obj_count=2) {
+                    const char* save_video_path = "video/", const uint num_tasks=2) {
   rai::Animation A;
   for (const auto &p : plan) {
     for (const auto path : p.second) {
@@ -192,24 +192,33 @@ void visualize_plan_stacking(rai::Configuration C, const Plan &plan,
             // set bin picking things
             const auto task_index = part.task_index;
             const auto obj_name = STRING("obj" << task_index + 1);
-            const auto obj1_name = STRING("obj" <<1);
-            const auto obj2_name = STRING("obj" <<2);
-
             if (part.anim.frameNames.contains(obj_name)) {
               const auto pose =
                   part.anim.X[uint(std::floor(t - part.anim.start))];
               arr tmp(1, 7);
-              if(true){
-                arr tmp1(1, 7),tmp2(1, 7);
-                tmp1[0]= pose[-1];    
-                tmp2[0]= pose[-2];
-                C.setFrameState(tmp1, {C[obj1_name]});
-                C.setFrameState(tmp2, {C[obj2_name]});
+              if(task_index==(num_tasks-1)){
+                // arr tmp1(1, 7),tmp2(1, 7);
+                // tmp1[0]= pose[-1];    
+                // tmp2[0]= pose[-2];
+                // C.setFrameState(tmp1, {C[obj1_name]});
+                // C.setFrameState(tmp2, {C[obj2_name]});
+                for(uint i=0;i<num_tasks;i++){
+                  arr tmp(1, 7);
+                  const auto obj_name = STRING("obj" <<i+1);
+                  tmp[0]= pose[-(i+1)];
+                  C.setFrameState(tmp, {C[obj_name]});
+                }
               }
               else{
-                tmp[0] = pose[-1];
+                tmp[0] = pose[-(task_index+1)];
                 C.setFrameState(tmp, {C[obj_name]});
               }
+              // for(uint i=0;i<task_index+1;i++){
+              //     arr tmp(1, 7);
+              //     const auto obj_name = STRING("obj" <<i+1);
+              //     tmp[0]= pose[-(i+1)];
+              //     C.setFrameState(tmp, {C[obj_name]});
+              //   }
               
             }
             break;

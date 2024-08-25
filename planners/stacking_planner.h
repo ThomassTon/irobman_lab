@@ -293,7 +293,8 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
       arr rotationmantix;
       arr r0_b;
       arr r0_1;
-      for(uint k = 0; k< sequence.size()/2; ++k){
+      uint num_task = sequence.size()/2;
+      for(uint k = 0; k< num_task; ++k){
           // std::cout<<"k: "<<k<<"\n";
           // uint run_time_array[sequence.size()][2];   // save the first start time ;
 
@@ -326,19 +327,7 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
               }
             }
           }
-
-          /*
-          const auto res = plan_task(CPlanner, sequence[i], rtpm, robot_frames,
-          best_makespan_so_far, home_poses, prev_finishing_time, paths);
-
-          if (res != PlanStatus::success){
-            return PlanResult(res);
-          }*/
-
-          // set robots to home pose
-
-          
-
+        
           for (uint i = k*2; i < k*2+2; ++i) {
             // if(i==0){
             for (const auto &r : home_poses) {
@@ -488,15 +477,19 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
               auto tmp_frames = robot_frames[robot];
               // add obj. frame to the anim-part.
               if (is_bin_picking&&robot=="a0_") {
-                const auto obj = STRING("obj" << task + 1);
-                auto to = CPlanner[obj];
-                tmp_frames.append(to);
-                if(task==1){
-                  const auto obj = STRING("obj" << task);
+                // const auto obj = STRING("obj" << task + 1);
+                // auto to = CPlanner[obj];
+                // tmp_frames.append(to);
+                // if(task==1){
+                //   const auto obj = STRING("obj" << task);
+                //   auto to = CPlanner[obj];
+                //   tmp_frames.append(to);
+                // }
+                for(uint i=task+1; i>0;i--){
+                  const auto obj = STRING("obj" << i);
                   auto to = CPlanner[obj];
                   tmp_frames.append(to);
                 }
-
               }
               const auto anim_part =
                   make_animation_part(CPlanner, path.path, tmp_frames, start_time);
@@ -538,14 +531,15 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
                   to->linkFrom(from, true);
                   r0_b =  CPlanner[pen_tip]->getPosition();
                   rotationmantix = CPlanner[pen_tip]->getRotationMatrix();
-                  if(task==1){
-                    auto to2 = CPlanner["obj1"];
-                    to2->unLink();
+                  // if(task>0){
+                  //   const auto obj_last = STRING("obj" << task);
+                  //   auto to2 = CPlanner["obj1"];
+                  //   to2->unLink();
 
-                    to2->linkFrom(to,true);
+                  //   to2->linkFrom(to,true);
 
 
-                  }
+                  // }
                   //  r0_b = CPlanner[obj]->getPosition();
                   // rotationmantix = CPlanner[obj]->getRotationMatrix();
                   // std::cout<<"boxpos:   "<<rotationmantix<<"\n\n\n";
@@ -565,16 +559,45 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
                 // to->linkFrom(from, true);
               }
 
-              if (j == 1) {
-                auto to = CPlanner[obj];
-                auto from = CPlanner["table_base"];
-                if(robot=="a0_"){
+              else if (j == 1) {
+                // auto to = CPlanner[obj];
+                // auto from = CPlanner["table_base"];
+                if(robot=="a0_" && task<(num_task-1)){  // link to previous obj (or bottom)
+                  auto to = CPlanner[obj];
+                  uint pre_index = task>0 ? task:num_task;   // The last object is at the bottom
+                  const auto pre_obj = STRING("obj" << pre_index);
+                  auto from = CPlanner[pre_obj];
+                  to->unLink();
+                    // create a new joint
+                  to->linkFrom(from, true);
+                }
+                // if(robot=="a0_" && task==0){  // link to previous obj (or bottom)
+                //   auto to = CPlanner[obj];
+                //   uint pre_index = task>0 ? task:num_task;   // The last object is at the bottom
+                //   const auto pre_obj = STRING("obj" << 3);
+                //   auto from = CPlanner["table_base"];
+                //   to->unLink();
+                //     // create a new joint
+                //   to->linkFrom(from, true);
+                // }
+                // if(robot=="a0_" && task==1){  // link to previous obj (or bottom)
+                //   auto to = CPlanner[obj];
+                //   uint pre_index = task>0 ? task:num_task;   // The last object is at the bottom
+                //   const auto pre_obj = STRING("obj" << 1);
+                //   auto from = CPlanner["table_base"];
+                //   to->unLink();
+                //     // create a new joint
+                //   to->linkFrom(from, true);
+                // }
+                else if(robot=="a0_" && task==(num_task-1)){
+                  auto to = CPlanner[obj];
+                  uint pre_index = task>0 ? task:num_task;   // The last object is at the bottom
+                  const auto last_obj = STRING("obj" << pre_index);
+                  auto from = CPlanner["table_base"];
                   to->unLink();
 
                     // create a new joint
                   to->linkFrom(from, true);
-
-                  std::cout<<"path size2:::: "<<path.path.N<<"\n\n\n";
                 }
                 // to->unLink();
 

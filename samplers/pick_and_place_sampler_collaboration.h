@@ -54,7 +54,7 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
         // komo.addObjective({1.}, FS_vectorZ, {STRING(robots[0] << "pen")}, OT_sos, {1e1}, {0., 0., -1.});
         // komo.addObjective({1.}, FS_vectorZ, {STRING(robots[1] << "pen")}, OT_sos, {1e1}, {0., 0., -1.});
         komo.addObjective({1.,1.}, FS_distance, {obj, STRING(robots[0] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
-        komo.addObjective({1.,1.}, FS_distance, {obj, STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{0.001}); 
+        komo.addObjective({1.,1.}, FS_distance, {obj, STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
 
         // komo.addObjective({1.,1.}, FS_distance, {"table", STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.1}); 
 
