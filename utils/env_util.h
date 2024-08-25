@@ -130,7 +130,7 @@ void pick_and_place_cooperation(rai::Configuration &C, rai::String mode)
   base->setContact(0.);
 
   // C.addFile("./in/cooperation.g");
-  if(mode=="stacking"||mode=="stacking_singlearm"){
+  if(mode=="stacking_collaboration"||mode=="stacking_singlearm"){
     C.addFile("./in/StackingAndTransporting.g");
   }
   else if(mode=="collaboration_single_obj"){
