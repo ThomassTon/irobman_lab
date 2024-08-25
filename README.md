@@ -57,7 +57,7 @@ Execution single arm stacking with
 ```
 Execution collaboration stacking with
 ```
-./x.exe -pnpc true -mode stacking
+./x.exe -pnpc true -mode stacking_collaboration
 ```
 
 Execution collaboration with single obj with

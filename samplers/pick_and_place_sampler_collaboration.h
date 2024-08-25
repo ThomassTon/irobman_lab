@@ -92,7 +92,6 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
         // const bool res3 = cp.query(q2)->isFeasible;
         // const bool res4 = cp.query(q3)->isFeasible;
         cp.C.setJointState(q0);
-        cp.C.watch(true);
         if (res1 && res2 && komo.getReport(false).get<double>("ineq") < 1. &&
             komo.getReport(false).get<double>("eq") < 1.) {
             rtpm[robots[0]].push_back({q0.sub(0,6), q1.sub(0,6)});
