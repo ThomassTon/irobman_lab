@@ -57,7 +57,12 @@ Execution single arm stacking with
 ```
 Execution collaboration stacking with
 ```
-./x.exe -pnpc true -mode stacking_collaboration
+./x.exe -pnpc true -mode stacking_collaboration -obj_count 2
+```
+
+Execution collaboration stacking 3 objs with
+```
+./x.exe -pnpc true -mode stacking_collaboration -obj_count 3
 ```
 
 Execution collaboration with single obj with
@@ -73,6 +78,17 @@ Execution collaboration with single obj vertical with
 ```
 ./x.exe -pnpc true -mode collaboration_single_obj_vertical
 ```
+
+To transform the saved ppms into an mp4, run in terminal:
+```
+cd video
+ffmpeg -framerate 20 -i filename%05d.ppm -c:v libx264 -crf 25 -vf "scale=400:400,format=yuv420p" -movflags +faststart videoname.mp4
+```
+To transform the mp4 into a high-quality gif, run:
+```
+gifski -o videoname.gif videoname.mp4
+```
+
 # DEMOS
 
 | Single Arm |stacking|
@@ -86,3 +102,7 @@ Execution collaboration with single obj vertical with
 | collaboration with obstacle|stacking with collaboration|
 |---|---|
 <img src="./video/bin_picking/cooperation_4.gif" alt="005" style="zoom: 70%;" /> |<img src="./video/bin_picking/stacking_co.gif" alt="005" style="zoom: 70%;" /> 
+
+|stacking with collaboration|
+|---|
+<img src="./video/bin_picking/stacking_co_3.gif" alt="005" style="zoom: 70%;" /> |
