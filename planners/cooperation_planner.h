@@ -190,6 +190,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
   // r0_1.append(0.2, -0.1 ,0.0);
 
   for (uint j = 0; j < rtpm.at(_robot)[_task].size(); ++j) {
+  // for (uint j = 0; j < 1; ++j) {
     uint prev_finishing_time = 0;
 
     for (const auto &p : paths) {
@@ -230,7 +231,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
       const Robot robot = sequence[i].first;
       const uint task = sequence[i].second;
       std::cout << "planning task " << task << " for robot " << robot << " as "
-                << i << " th task" << std::endl;
+                << j << " th task" << std::endl;
 
       bool is_bin_picking = false;
       if (rtpm.at(robot)[task].size() > 1) {
@@ -272,7 +273,6 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
       }
 
       const arr goal_pose = rtpm.at(robot)[task][j];
-      std::cout<<"goal pose: "<<goal_pose<<"\n\n\n\n\n\n\n\n\n";
       const uint time_lb = std::max(
           {(j == rtpm.at(robot)[task].size() - 1) ? prev_finishing_time : 0,
            start_time});
@@ -420,7 +420,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
             to->linkFrom(from, true);
             r0_b =  CPlanner[pen_tip]->getPosition();
             rotationmantix = CPlanner[pen_tip]->getRotationMatrix();
-            std::cout<<"penpos:   "<<rotationmantix<<"\n\n\n";
+            // std::cout<<"penpos:   "<<rotationmantix<<"\n\n\n";
 
             //  r0_b = CPlanner[obj]->getPosition();
             // rotationmantix = CPlanner[obj]->getRotationMatrix();
@@ -450,7 +450,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
               // create a new joint
             to->linkFrom(from, true);
 
-            std::cout<<"path size2:::: "<<path.path.N<<"\n\n\n";
+            // std::cout<<"path size2:::: "<<path.path.N<<"\n\n\n";
           }
           // to->unLink();
 

@@ -21,7 +21,6 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
         KOMO komo;
         komo.verbose = 0;
         komo.setModel(C, true);
-
         komo.setDiscreteOpt(2);
 
         // komo.world.stepSwift();
