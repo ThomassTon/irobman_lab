@@ -62,26 +62,26 @@ Execution collaboration stacking with
 ./x.exe -pnpc true -mode stacking_collaboration -obj_count 2
 ```
 
-Execution collaboration stacking 3 objs with
+Execution Collaborative stacking 3 boxes with
 ```
 ./x.exe -pnpc true -mode stacking_collaboration -obj_count 3
 ```
 
-Execution collaboration with single obj with
+Execution Collaborative grasp single box with
 ```
 ./x.exe -pnpc true -mode collaboration_obj -obj_count 1
 ```
 
-Execution collaboration with 2 obj with
+Execution Collaborative grasp 2 boxes with
 ```
 ./x.exe -pnpc true -mode collaboration_obj -obj_count 2
 ```
 
-Execution collaboration with single obj and obstacle with
+Execution Collaborative grasp of a box while avoiding obstacles with
 ```
 ./x.exe -pnpc true -mode collaboration_single_obj_obstacle
 ```
-Execution collaboration with single obj vertical with
+Execution Collaborative grasp single obj vertical with
 ```
 ./x.exe -pnpc true -mode collaboration_single_obj_vertical
 ```
