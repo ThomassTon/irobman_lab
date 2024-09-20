@@ -49,6 +49,8 @@ The folder structure should be:
 
 Please change the rai path from `rai-fork` to `rai` in the Makefile in `rai-manip/PlanningSubroutines` and `rai-manip/Manip`.
 
+## Execution
+
 Execution Single arm pick and placing with
 ```
 ./x.exe -pnps true -mode single_arm
