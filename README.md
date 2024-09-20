@@ -1,5 +1,7 @@
 The project aims for two robotic arms to collaboratively grasp the same object.
+
 We assume the use of two robotic arms working collaboratively to perform motion planning based on the given initial and target positions of the object to be grasped. 
+
 To coordinate the motion planning, we first plan the movement of the first arm and save its waypoints. Then, based on the relative transformation between the two end-effectors, we generate the waypoints for the second arm and use KOMO to follow these waypoints. We designed various test scenarios for this approach, such as object transportation, stacking, and obstacle avoidance, all of which were successfully executed. 
 
 # Installation 
