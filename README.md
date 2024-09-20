@@ -47,17 +47,17 @@ The folder structure should be:
 
 Please change the rai path from `rai-fork` to `rai` in the Makefile in `rai-manip/PlanningSubroutines` and `rai-manip/Manip`.
 
-Execution single arm pick and placing with
+Execution Single arm pick and placing with
 ```
 ./x.exe -pnps true -mode single_arm
 
 ```
 
-Execution single arm stacking with
+Execution Single arm stacking with
 ```
 ./x.exe -pnps true -mode stacking_singlearm
 ```
-Execution collaboration stacking with
+Execution Collaborative stacking 2 boxes with
 ```
 ./x.exe -pnpc true -mode stacking_collaboration -obj_count 2
 ```
