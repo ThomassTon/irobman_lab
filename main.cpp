@@ -95,8 +95,7 @@ int main(int argc, char **argv) {
     robots = {"a0_"};
   }
   else if(plan_pick_and_place_collaboration){
-    pick_and_place_collaboration(C,mode,obj_count);     // set the robot config
-
+    pick_and_place_collaboration(C,mode,obj_count);     // set the robot conf
     robots = {"a0_","a1_"};   
   }
   else if (plan_pick_and_place) {
@@ -144,13 +143,16 @@ int main(int argc, char **argv) {
     {
       robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,obj_count);// change box number
     }
+    else if(mode == "collaboration_obj"){
+      robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,obj_count);
+    }
     else if(mode =="stacking_singlearm"){
       robot_task_pose_mapping = compute_pick_and_place_positions(C, robots,2);
     }
     else if(mode =="single_arm"){
       robot_task_pose_mapping = compute_pick_and_place_positions(C, robots,5);
     }
-    else if(mode =="collaboration_single_obj"||mode=="collaboration_single_obj_obstacle"||mode =="collaboration_single_obj_vertical"){
+    else if(mode=="collaboration_single_obj_obstacle"||mode =="collaboration_single_obj_vertical"){
       robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,1);
     }
     
@@ -180,7 +182,7 @@ int main(int argc, char **argv) {
     visualize_plan_stacking(C, plan, save_video, "video/bin_picking/stacking",num_tasks);
   }
 
-  else if(mode =="collaboration_single_obj"){
+  else if(mode =="collaboration_obj"){
     const auto plan = plan_cooperation_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
 
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;

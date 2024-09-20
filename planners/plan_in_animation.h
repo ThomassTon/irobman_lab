@@ -483,10 +483,10 @@ TaskPart plan_in_animation(const rai::Animation &A, rai::Configuration &C,
       }
     }
   }
-// if (komo_path.has_solution && rrt_path.has_solution) {
-//     std::cout<<"komo_size: "<<komo_path.t(-1)<<"  !!!\n\n\n";
-//     std::cout<<"rrt_size: "<<rrt_path.t(-1)<<"  !!!\n\n\n";
-// }
+if (komo_path.has_solution && rrt_path.has_solution) {
+    std::cout<<"komo_size: "<<komo_path.t(-1)<<"  !!!\n\n\n";
+    std::cout<<"rrt_size: "<<rrt_path.t(-1)<<"  !!!\n\n\n";
+}
 // if (rrt_path.has_solution ) {
 //   std::cout << "using rrt!!!!!!!!!!\n\n\n\n" << std::endl;
 //   return rrt_path;

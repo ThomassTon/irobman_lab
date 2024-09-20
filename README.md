@@ -1,4 +1,6 @@
-irobman_lab
+The project aims for two robotic arms to collaboratively grasp the same object.
+We assume the use of two robotic arms working collaboratively to perform motion planning based on the given initial and target positions of the object to be grasped. 
+To coordinate the motion planning, we first plan the movement of the first arm and save its waypoints. Then, based on the relative transformation between the two end-effectors, we generate the waypoints for the second arm and use KOMO to follow these waypoints. We designed various test scenarios for this approach, such as object transportation, stacking, and obstacle avoidance, all of which were successfully executed. 
 
 # Installation 
 ![sys-vesrion](https://img.shields.io/badge/Ubuntu-20.04-blue)
@@ -67,7 +69,12 @@ Execution collaboration stacking 3 objs with
 
 Execution collaboration with single obj with
 ```
-./x.exe -pnpc true -mode collaboration_single_obj
+./x.exe -pnpc true -mode collaboration_obj -obj_count 1
+```
+
+Execution collaboration with 2 obj with
+```
+./x.exe -pnpc true -mode collaboration_obj -obj_count 2
 ```
 
 Execution collaboration with single obj and obstacle with
@@ -91,18 +98,18 @@ gifski -o videoname.gif videoname.mp4
 
 # DEMOS
 
-| Single Arm |stacking|
+| Single-arm grasping of multiple objects using komo |Single-arm stacking using komo|
 |---|---|
 <img src="./video/bin_picking/single_arm.gif" alt="005" style="zoom: 70%;" /> |<img src="./video/bin_picking/stacking_single_arm.gif" alt="005" style="zoom: 70%;" />
 
-| collaboration | collaboration|
+| Collaborative grasp of a box using ST-RRT* | Collaborative grasp of a box using KOMO|
 |---|---|
-<img src="./video/bin_picking/cooperation_1.gif" alt="005" style="zoom: 70%;" /> | <img src="./video/bin_picking/cooperation_2.gif" alt="005" style="zoom: 70%;" />
+<img src="./video/bin_picking/cooperation_1.gif" alt="005" style="zoom: 70%;" /> | <img src="./video/bin_picking/collaboration_1.gif" alt="005" style="zoom: 70%;" />
 
-| collaboration with obstacle|stacking with collaboration|
+| Collaborative grasp of a box while avoiding obstacles using ST-RRT* |Collaborative stacking two boxes uisng KOMO|
 |---|---|
-<img src="./video/bin_picking/cooperation_4.gif" alt="005" style="zoom: 70%;" /> |<img src="./video/bin_picking/stacking_co.gif" alt="005" style="zoom: 70%;" /> 
+<img src="./video/bin_picking/cooperation_4.gif" alt="005" style="zoom: 70%;" /> |<img src="./video/bin_picking/collaboration_2.gif" alt="005" style="zoom: 70%;" /> 
 
-|stacking with collaboration|
+|Collaborative stacking two boxes uisng KOMO|
 |---|
-<img src="./video/bin_picking/stacking_co_3.gif" alt="005" style="zoom: 70%;" /> |
+<img src="./video/bin_picking/stacking_co_3.gif" alt="005" style="zoom: 70%;" /> |<img src="./video/bin_picking/stacking_co.gif" alt="005" 

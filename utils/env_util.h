@@ -138,8 +138,11 @@ void pick_and_place_collaboration(rai::Configuration &C, rai::String mode, uint 
     }
     
   }
-  else if(mode=="collaboration_single_obj"){
-    C.addFile("./in/collaboration_single_obj.g");
+  else if(mode=="collaboration_obj"){
+    if(obj_count==1)
+      C.addFile("./in/collaboration_single_obj.g");
+    else if(obj_count ==2)
+      C.addFile("./in/collaboration_2_obj.g");
   }
   else if(mode=="collaboration_single_obj_obstacle"){
     C.addFile("./in/collaboration_single_obj_obstacle.g");

@@ -434,9 +434,10 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
               uint size_of_path =  paths["a0_"].back().path.N /7;
               // std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
               arr t_a1;
-              arr path_a1(0u,paths["a0_"].back().path.d1);
+              // arr path_a1(0u,paths["a0_"].back().path.d1);
                   // arr p(0u, path.d1);
               CPlanner.setJointState(paths[robot].back().path[-1]);
+              arr waypoints(0u,3);
               for(uint i = 0; i<size_of_path; i++){
                 auto r0b = paths["a0_"].back().path[i];
                 auto t = paths["a0_"].back().t(i);
@@ -446,13 +447,15 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
                 // std::cout<<"box pose air:"<<_r0_b<<"\n\n\n\n\n\n";
                 auto rotationmatrix = CTest[pen_tip]->getRotationMatrix();
                 auto _goal_pose = get_trans_position(_r0_b,rotationmatrix,r0_1);
-                auto goal_pose_= get_position(CPlanner,robot,_goal_pose);
-                CPlanner.setJointState(goal_pose_);
+                waypoints.append(_goal_pose);
+
+                // auto goal_pose_= get_position(CPlanner,robot,_goal_pose);
+                // CPlanner.setJointState(goal_pose_);
                 t_a1.append(t);
-                path_a1.append(goal_pose_);
-                // Ta
-                // std::cout<<"path size"<<path.path.sizeT<<"\n\n\n\n\n\n";
+                // path_a1.append(goal_pose_);
+   
               }
+              auto path_a1 = get_joints_from_waypoints(CPlanner,robot, waypoints);
               TaskPart path_(t_a1,path_a1);
               path_.has_solution=true;
               path = path_;
