@@ -91,7 +91,7 @@ void pick_and_place(rai::Configuration &C)
 
   C.addFile("./in/table_pick_place.g");
 
-  const arrA basePos = {{-.5, -.1, 0.00}, {.5, .1, 0.0}, {.0, .6, 0.15}};
+  const arrA basePos = {{-.6, -.1, 0.00}, {.6, .1, 0.0}, {.0, .6, 0.15}};
 
   const arrA baseQuat = {
       {1, 0, 0, 0},
@@ -152,7 +152,7 @@ void pick_and_place_collaboration(rai::Configuration &C, rai::String mode, uint 
     C.addFile("./in/collaboration_single_obj _vertical.g");
   }
     
-  const arrA basePos = {{-.8, 0.0, 0.00}, {.8, 0.0, 0.0}};
+  const arrA basePos = {{-.83, .1, 0.00}, {.83, -.1, 0.0}};
 
   const arrA baseQuat = {
       {1, 0, 0, 0},

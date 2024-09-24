@@ -359,13 +359,14 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
               // let two arm start at the same timepunkt
               // uint max_last_run_time = std::max(paths[sequence[0].first].back().t(-1), paths[sequence[1].first].back().t(-1));  
               // uint max_last_run_time = std::max(run_time_array[0][j-1], run_time_array[1][j-1]);
-              // if(robot=="a0_"){
-              //   uint max_last_run_time = std::max(paths["a0_"].back().t(-1), paths["a1_"].back().t(-1));  
+              if(robot=="a0_"){
+                uint max_last_run_time = std::max(paths["a0_"].back().t(-1), paths["a1_"].back().t(-1));  
 
-              //   start_time = start_time <  max_last_run_time ?  max_last_run_time: start_time;
-              // }  
+                start_time = start_time <  max_last_run_time ?  max_last_run_time: start_time;
+                
+              }  
               
-              // start_time +=3;
+              // start_time +=1;
             } else {
               start_pose = home_poses.at(robot);
               start_time = 0;
@@ -390,10 +391,7 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
             std::cout << "new start time " << start_time << std::endl;
             std::cout << "lower bound time " << time_lb << std::endl;
             
-            // if(i>0){
-            //   start_time = start_time_array[i-1][j];
-            // }
-            // start_time_array[i][j]=start_time;
+
               
             
             
@@ -423,19 +421,11 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
         
             // std::cout<<"goal pose: "<<goal_pose<<"\n\n\n\n\n\n";
             if(j==1&&robot=="a1_"){
-              // for(auto r0b :paths[sequence[0].first].back().path){
 
-              // }
-              // for (auto it : paths[sequence[0].first].back().path) {
-              //   std::cout << it << "\n ";
-              // }
-
-              // auto r0b = paths[sequence[0].first].back().path[-1];
               uint size_of_path =  paths["a0_"].back().path.N /7;
               // std::cout<<"robot a0 size: "<<size_of_path<<"\n\n";
               arr t_a1;
-              // arr path_a1(0u,paths["a0_"].back().path.d1);
-                  // arr p(0u, path.d1);
+     
               CPlanner.setJointState(paths[robot].back().path[-1]);
               arr waypoints(0u,3);
               for(uint i = 0; i<size_of_path; i++){
@@ -474,14 +464,6 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
               auto tmp_frames = robot_frames[robot];
               // add obj. frame to the anim-part.
               if (is_bin_picking&&robot=="a0_") {
-                // const auto obj = STRING("obj" << task + 1);
-                // auto to = CPlanner[obj];
-                // tmp_frames.append(to);
-                // if(task==1){
-                //   const auto obj = STRING("obj" << task);
-                //   auto to = CPlanner[obj];
-                //   tmp_frames.append(to);
-                // }
                 for(uint i=task+1; i>0;i--){
                   const auto obj = STRING("obj" << i);
                   auto to = CPlanner[obj];
@@ -543,24 +525,7 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
                     // create a new joint
                   to->linkFrom(from, true);
                 }
-                // if(robot=="a0_" && task==0){  // link to previous obj (or bottom)
-                //   auto to = CPlanner[obj];
-                //   uint pre_index = task>0 ? task:num_task;   // The last object is at the bottom
-                //   const auto pre_obj = STRING("obj" << 3);
-                //   auto from = CPlanner["table_base"];
-                //   to->unLink();
-                //     // create a new joint
-                //   to->linkFrom(from, true);
-                // }
-                // if(robot=="a0_" && task==1){  // link to previous obj (or bottom)
-                //   auto to = CPlanner[obj];
-                //   uint pre_index = task>0 ? task:num_task;   // The last object is at the bottom
-                //   const auto pre_obj = STRING("obj" << 1);
-                //   auto from = CPlanner["table_base"];
-                //   to->unLink();
-                //     // create a new joint
-                //   to->linkFrom(from, true);
-                // }
+
                 else if(robot=="a0_" && task==(num_task-1)){
                   auto to = CPlanner[obj];
                   uint pre_index = task>0 ? task:num_task;   // The last object is at the bottom
@@ -571,10 +536,7 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
                     // create a new joint
                   to->linkFrom(from, true);
                 }
-                // to->unLink();
 
-                // create a new joint
-                // to->linkFrom(from, true);
               }
 
               // CPlanner.watch(true);
