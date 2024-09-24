@@ -363,7 +363,7 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
                 uint max_last_run_time = std::max(paths["a0_"].back().t(-1), paths["a1_"].back().t(-1));  
 
                 start_time = start_time <  max_last_run_time ?  max_last_run_time: start_time;
-                
+                // start_time +=1;
               }  
               
               // start_time +=1;

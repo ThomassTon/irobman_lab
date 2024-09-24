@@ -89,14 +89,7 @@ auto get_joints_from_waypoints(rai::Configuration &C, const std::string &robot, 
   komo.verbose = 0;
   komo.setModel(C, true);
   komo.setDiscreteOpt(waypoints.d0);
-  // komo.setTiming();
-  // auto q0 = C.getJointState();
-  // komo.solver = rai::KS_sparse;
-  // komo.setConfiguration(-2, q0);
-  // komo.setConfiguration(-1, q0);
-  // komo.setConfiguration(0, q0);
-  // komo.add_qControlObjective({}, 2, 1e1);
-  // komo.add_qControlObjective({}, 1, 1e1);
+
 
   for(uint i=0; i<waypoints.d0;i++){
     auto waypoint = STRING("waypoint"<<i);
@@ -106,27 +99,16 @@ auto get_joints_from_waypoints(rai::Configuration &C, const std::string &robot, 
     // std::cout<<waypoints[i]<<"\n";
   }
 
-  // komo.addObjective({0.95, 1.0}, FS_qItself, {}, OT_eq, {1e1}, {},
-  //                 1); // slow at end
+  std::cout << "done komo path" << std::endl;
 
-  // // acceleration
-  // // komo.addObjective({0.0, 0.05}, FS_qItself, {}, OT_eq, {1e1}, {},
-  // //                  2); // slow at beginning
-  // komo.addObjective({0.95, 1.0}, FS_qItself, {}, OT_eq, {1e1}, {},
-  //                   2); // slow at end
-  // ConfigurationProblem cp(komo.world);
-  // cp.computeCollisions = true;
-  std::cout << "done komo2222" << std::endl;
-
-  // cp.C.feature(FS_accumulatedCollisions,{});
-  // setActive(cp.C, robot);
   arr q;
   komo.run_prepare(0.0, true);
   komo.run(options);
   komo.optimize();
-
+  uint len_path = komo.getPath_q().d0;
+  std::cout<<"len:  "<<len_path<<"!!!!\n\n\n\n";
   arr path(waypoints.d0, 7);
-  for (uint j = 0; j < 10; ++j) {
+  for (uint j = 0; j < len_path; ++j) {
     path[j] = komo.getPath_q(j);
   }
   std::cout<<path;
@@ -142,7 +124,6 @@ auto get_r_0_1(const auto& r0_b, const auto &rotationmatrix, const auto &r1_b){
     double ele=0;
     for(int j=0;j<3;j++){
       ele +=rotationmatrix[j](i)*r1_b(j);
-      // std::cout<<rotationmatrix[j](i)<<"\n\n\n\n";
     }
     rb.append(ele);
   }
@@ -151,14 +132,10 @@ auto get_r_0_1(const auto& r0_b, const auto &rotationmatrix, const auto &r1_b){
     double ele=0;
     for(int j=0;j<3;j++){
       ele +=rotationmatrix[j](i)*r0_b(j);
-      // std::cout<<rotationmatrix[j](i)<<"\n\n\n\n";
     }
     ra.append(ele);
   } 
-  // std::cout<<"rotation matrix"<<rotationmatrix<<"\n\n\n\n";
-  // std::cout<<"rob: "<<r0_b<<"\n\n\n\n\n";
-  // std::cout<<"r1b: "<<r1_b<<"\n\n\n\n\n";
-  // std::cout<<"rb: "<<-ra+rb<<"\n\n\n\n\n";
+
 
   return -ra+rb;
 }
@@ -228,8 +205,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
       arr r0_1;
       uint num_task = sequence.size()/2;
       for(uint k = 0; k< num_task; ++k){
-          // std::cout<<"k: "<<k<<"\n";
-          // uint run_time_array[sequence.size()][2];   // save the first start time ;
+
 
         // actually plan
         const Robot _robot = sequence[0].first;
@@ -268,7 +244,6 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
               CPlanner.setJointState(r.second);
             }
             
-            // std::cout<<"i: "<<i<<"\n";
             // plan for current goal
             const Robot robot = sequence[i].first;
             const uint task = sequence[i].second;
@@ -295,7 +270,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
               start_pose = paths[robot].back().path[-1];
               start_time = paths[robot].back().t(-1);
               // let two arm start at the same timepunkt
-              uint max_last_run_time = std::max(paths[sequence[0].first].back().t(-1), paths[sequence[1].first].back().t(-1));  
+              // uint max_last_run_time = std::max(paths[sequence[0].first].back().t(-1), paths[sequence[1].first].back().t(-1));  
               // uint max_last_run_time = std::max(run_time_array[0][j-1], run_time_array[1][j-1]);
               if(robot=="a0_"){
                 uint max_last_run_time = std::max(paths["a0_"].back().t(-1), paths["a1_"].back().t(-1));  
@@ -303,7 +278,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
                 start_time = start_time <  max_last_run_time ?  max_last_run_time: start_time;
               }  
               
-              start_time +=3;
+              start_time +=1;
             } else {
               start_pose = home_poses.at(robot);
               start_time = 0;
@@ -328,13 +303,8 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
             std::cout << "new start time " << start_time << std::endl;
             std::cout << "lower bound time " << time_lb << std::endl;
             
-            // if(i>0){
-            //   start_time = start_time_array[i-1][j];
-            // }
-            // start_time_array[i][j]=start_time;
-              
-            
-            
+
+           
             // make animation from path-parts
             rai::Animation A;
             for (const auto &p : paths) {
@@ -357,9 +327,7 @@ PlanResult plan_cooperation_arms_given_subsequence_and_prev_plan(
             setActive(CTest,sequence[0].first);
 
             TaskPart path;
-              //  std::cout<<"path_1"<<path.path<<"\n";
         
-            // std::cout<<"goal pose: "<<goal_pose<<"\n\n\n\n\n\n";
             if(j==1&&robot=="a1_"){
               uint size_of_path =  paths["a0_"].back().path.N /7;
               arr t_a1;
