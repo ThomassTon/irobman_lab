@@ -54,7 +54,6 @@ Please change the rai path from `rai-fork` to `rai` in the Makefile in `rai-mani
 Execution Single arm pick and placing with
 ```
 ./x.exe -pnps true -mode single_arm
-
 ```
 
 Execution Single arm stacking with
