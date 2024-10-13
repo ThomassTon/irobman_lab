@@ -42,20 +42,10 @@ compute_pick_and_place_positions(rai::Configuration &C,
 
       komo.setSkeleton(S);
 
-      // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
-      // OT_eq,
-      //                  {1e2}, point);
-      // komo.addObjective({1., 1.}, FS_distance, {STRING(prefix << "pen_tip"),
-      // STRING(obj << i + 1)}, OT_eq, {1e1});
 
       komo.addObjective({1.}, FS_vectorZ, {STRING(prefix << "pen")}, OT_sos,
                         {1e1}, {0., 0., -1.});
-      // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
-      // OT_sos, {1e0}, C[obj]->getPosition());
 
-      // komo.addObjective({1.}, FS_vectorZ, {STRING(prefix << "pen")}, OT_sos,
-      // {1e1}, {0., 0., -1.}); komo.addObjective({1.}, FS_vectorZDiff,
-      // {STRING(prefix << "pen"), "world"}, OT_ineq, {1e1}, {0., 0., -0.9});
       ConfigurationProblem cp(komo.world);
       setActive(cp.C, prefix);
 

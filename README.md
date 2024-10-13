@@ -31,7 +31,7 @@ make runTests      # (optional) compile and run the essential tests
 cd ..
 git clone https://github.com/yuezhezhang/rai-robotModels.git
 git clone https://github.com/yuezhezhang/rai-manip.git 
-git clone https://github.com/yuezhezhang/valentin_robot_stippling.git
+git clone https://github.com/ThomassTon/irobman_lab
 
 # Install other dependencies
 sudo apt install libspdlog-dev
@@ -44,7 +44,7 @@ The folder structure should be:
 │   ├── rai
 │   ├── rai-robotModels
 │   ├── rai-manip
-│   ├── valentin_robot_stippling
+│   ├── irobman_lab
 ```
 
 Please change the rai path from `rai-fork` to `rai` in the Makefile in `rai-manip/PlanningSubroutines` and `rai-manip/Manip`.

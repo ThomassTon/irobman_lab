@@ -43,29 +43,8 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
 
         komo.setSkeleton(S);
 
-        // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
-        // OT_eq,
-        //                  {1e2}, point);
-        // komo.addObjective({1., 1.}, FS_distance, {STRING(prefix << "pen_tip"),
-        // STRING(obj << i + 1)}, OT_eq, {1e1});
-
-        // komo.addObjective({1.}, FS_vectorZ, {STRING(robots[0] << "pen")}, OT_sos, {1e1}, {0., 0., -1.});
-        // komo.addObjective({1.}, FS_vectorZ, {STRING(robots[1] << "pen")}, OT_sos, {1e1}, {0., 0., -1.});
         komo.addObjective({1.,1.}, FS_distance, {obj, STRING(robots[0] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
         komo.addObjective({1.,1.}, FS_distance, {obj, STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
-
-        // komo.addObjective({1.,1.}, FS_distance, {"table", STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.1}); 
-
-        // komo.addObjective({1.}, FS_distance, {obj, STRING(robots[0] << "pen_tip")}, OT_ineq, {1e1}, {-0.0}); 
-        // komo.addObjective({1.}, FS_distance, {obj, STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
-        // komo.addObjective({2.}, FS_distance, {goal, STRING(robots[0] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
-        // komo.addObjective({2.}, FS_distance, {goal, STRING(robots[1] << "pen_tip")}, OT_ineq, {1e1},{-0.0}); 
-        // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
-        // OT_sos, {1e0}, C[obj]->getPosition());
-
-        // komo.addObjective({1.}, FS_vectorZ, {STRING(prefix << "pen")}, OT_sos,
-        // {1e1}, {0., 0., -1.}); komo.addObjective({1.}, FS_vectorZDiff,
-        // {STRING(prefix << "pen"), "world"}, OT_ineq, {1e1}, {0., 0., -0.9});
 
         ConfigurationProblem cp(komo.world);
         setActive(cp.C, robots);
@@ -76,13 +55,6 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
 
         const arr q0 = komo.getPath()[0]();
         const arr q1 = komo.getPath()[1]();
-        // const arr q2 = komo.getPath_frames(robots[0]);
-        // const arr q2 = komo.getPath()[2]();
-        // const arr q3 = komo.getPath()[3]();
-        // std::cout<<"getpath:  "<<komo.getPath();
-        // std::cout<<"getpath2:  "<<q0.sub(0,6);
-
-        // komo.pathConfig.watch(true);
 
         // ensure via sampling as well
         const bool res1 = cp.query(q0)->isFeasible;
