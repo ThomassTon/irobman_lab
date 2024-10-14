@@ -23,8 +23,6 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
         komo.setModel(C, true);
         komo.setDiscreteOpt(2);
 
-        // komo.world.stepSwift();
-
         komo.add_collision(true, .01, 1e1);
         komo.add_jointLimits(true, 0., 1e1);
 
@@ -59,14 +57,11 @@ compute_pick_and_place_positions_collaboration(rai::Configuration &C,
         // ensure via sampling as well
         const bool res1 = cp.query(q0)->isFeasible;
         const bool res2 = cp.query(q1)->isFeasible;
-        // const bool res3 = cp.query(q2)->isFeasible;
-        // const bool res4 = cp.query(q3)->isFeasible;
         cp.C.setJointState(q0);
         if (res1 && res2 && komo.getReport(false).get<double>("ineq") < 1. &&
             komo.getReport(false).get<double>("eq") < 1.) {
             rtpm[robots[0]].push_back({q0.sub(0,6), q1.sub(0,6)});
             rtpm[robots[1]].push_back({q0.sub(7,13), q1.sub(7,13)});
-            // rtpm[robots[0]].push_back({q0, q1});
             break;
         } else {
             std::cout << "failed for a bit" << std::endl;

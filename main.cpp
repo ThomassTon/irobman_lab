@@ -42,24 +42,12 @@
 #include "utils/env_util.h"
 #include "utils/path_util.h"
 
-// TODO:
-// - fix loading and visualization of previously computed paths
-// - time-rescale path
-// - split main planning subroutine
-// - squeaky wheel planner
-// - enable things that are not only 'go to point', e.g. drawing a line
-// - enable multi-arm cooperation
-// - enable search over sequences with precendence constraints
-// - look into more complex motion planning:
-// -- joint optimization
-// -- constrained sampling based planning
+
 
 int main(int argc, char **argv) {
   rai::initCmdLine(argc, argv);
   const uint seed = rai::getParameter<double>("seed", 42); // seed
   rnd.seed(seed);
-
-
 
   const uint verbosity = rai::getParameter<double>(
       "verbosity", 1); // verbosity, does not do anything atm
@@ -70,14 +58,14 @@ int main(int argc, char **argv) {
       rai::getParameter<bool>("pnp", true); // pick and place yes/no
 
   const bool plan_pick_and_place_single_arm =
-    rai::getParameter<bool>("pnps",false); // pick and place yes/no
+    rai::getParameter<bool>("pnps",false); // pick and place stacking yes/no
 
   const bool plan_pick_and_place_collaboration =
-    rai::getParameter<bool>("pnpc",false); 
+    rai::getParameter<bool>("pnpc",false);   // pick and place collaboration yes/no
 
   const rai::String mode =
       rai::getParameter<rai::String>("mode", "stacking"); // test, greedy_random_search, show_plan
-  
+
   const uint obj_count = rai::getParameter<double>("obj_count",2);
 
   const rai::String stippling_scenario =
@@ -90,8 +78,7 @@ int main(int argc, char **argv) {
 
   rai::Configuration C;
   if(plan_pick_and_place_single_arm){
-    pick_and_place_single_arm(C, mode);
-
+    pick_and_place_single_arm(C, mode);  // set the robot conf
     robots = {"a0_"};
   }
   else if(plan_pick_and_place_collaboration){
@@ -128,11 +115,9 @@ int main(int argc, char **argv) {
     if (pts.N == 0) {
       return 0;
     }
-
     if (verbosity > 0) {
       drawPts(C, pts);
     }
-
     // maps [robot] to [index, pose]
     std::cout << "Computing stippling poses" << std::endl;
     robot_task_pose_mapping = compute_stippling_poses_for_arms(C, pts, robots);
@@ -141,7 +126,7 @@ int main(int argc, char **argv) {
     std::cout << "Computing pick and place poses" << std::endl;
     if(mode =="stacking_collaboration")
     {
-      robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,obj_count);// change box number
+      robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,obj_count);// change box number (obj_count)
     }
     else if(mode == "collaboration_obj"){
       robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,obj_count);
@@ -155,8 +140,6 @@ int main(int argc, char **argv) {
     else if(mode=="collaboration_single_obj_obstacle"||mode =="collaboration_single_obj_vertical"){
       robot_task_pose_mapping = compute_pick_and_place_positions_collaboration(C, robots,1);
     }
-    
-    
   }
 
   // initial test
@@ -164,40 +147,37 @@ int main(int argc, char **argv) {
 
   if(mode=="single_arm"){
     const auto plan = plan_single_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
-
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
     visualize_plan(C, plan, save_video, "video/bin_picking/singlearm");
   }
+
   else if(mode =="stacking_singlearm"){
     const auto plan = plan_single_arm_stacking(C, robot_task_pose_mapping, home_poses);
-
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
     visualize_plan_stacking(C, plan, save_video, "video/bin_picking/stacking");
   }
+
   else if(mode =="stacking_collaboration"){
     uint num_tasks;
     const auto plan = plan_cooperation_arm_stacking(C, robot_task_pose_mapping, home_poses,num_tasks);
-
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
     visualize_plan_stacking(C, plan, save_video, "video/bin_picking/stacking",num_tasks);
   }
 
-  else if(mode =="collaboration_obj"){
+  else if(mode =="collaboration_obj"){ //collab pnp more than one box
     const auto plan = plan_cooperation_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
-
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
     visualize_plan(C, plan, save_video, "video/bin_picking/cooperation");
   }
+
   else if(mode =="collaboration_single_obj_obstacle"){
     const auto plan = plan_cooperation_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
-
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
     visualize_plan(C, plan, save_video, "video/bin_picking/cooperation");
   }
 
   else if(mode =="collaboration_single_obj_vertical"){
     const auto plan = plan_cooperation_arm_unsynchronized(C, robot_task_pose_mapping, home_poses);
-
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
     visualize_plan(C, plan, save_video, "video/bin_picking/cooperation");
   }
@@ -206,7 +186,6 @@ int main(int argc, char **argv) {
     const auto plan = plan_multiple_arms_unsynchronized(
         C, robot_task_pose_mapping, home_poses);
     std::cout << "Makespan: " << get_makespan_from_plan(plan) << std::endl;
-
     visualize_plan(C, plan, save_video, "video/bin_picking/unsync");
   } else if (mode == "random_search") {
     const auto plan = plan_multiple_arms_random_search(

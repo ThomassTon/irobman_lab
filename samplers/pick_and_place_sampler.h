@@ -22,11 +22,7 @@ compute_pick_and_place_positions(rai::Configuration &C,
       KOMO komo;
       komo.verbose = 0;
       komo.setModel(C, true);
-
       komo.setDiscreteOpt(2);
-
-      // komo.world.stepSwift();
-
       komo.add_collision(true, .01, 1e1);
       komo.add_jointLimits(true, 0., 1e1);
 
@@ -55,7 +51,6 @@ compute_pick_and_place_positions(rai::Configuration &C,
 
         const arr q0 = komo.getPath()[0]();
         const arr q1 = komo.getPath()[1]();
-        // komo.pathConfig.watch(true);
         std::cout<<"get path: "<<komo.getPath();
         // ensure via sampling as well
         const bool res1 = cp.query(q0)->isFeasible;
@@ -114,23 +109,12 @@ compute_pick_and_place_positions_co(rai::Configuration &C,
 
       komo.setSkeleton(S);
 
-      // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
-      // OT_eq,
-      //                  {1e2}, point);
-      // komo.addObjective({1., 1.}, FS_distance, {STRING(prefix << "pen_tip"),
-      // STRING(obj << i + 1)}, OT_eq, {1e1});
-
       komo.addObjective({1.}, FS_vectorZ, {STRING(prefix << "pen")}, OT_sos,
                         {1e1}, {0., 0., -1.});
       komo.addObjective({1.}, FS_distance,
                     {"table", STRING(prefix << "pen_tip")}, OT_ineq, {1e1},
                     {-0.1});                  
-      // komo.addObjective({1.}, FS_position, {STRING(prefix << "pen_tip")},
-      // OT_sos, {1e0}, C[obj]->getPosition());
 
-      // komo.addObjective({1.}, FS_vectorZ, {STRING(prefix << "pen")}, OT_sos,
-      // {1e1}, {0., 0., -1.}); komo.addObjective({1.}, FS_vectorZDiff,
-      // {STRING(prefix << "pen"), "world"}, OT_ineq, {1e1}, {0., 0., -0.9});
       ConfigurationProblem cp(komo.world);
       setActive(cp.C, prefix);
 
@@ -140,7 +124,6 @@ compute_pick_and_place_positions_co(rai::Configuration &C,
 
         const arr q0 = komo.getPath()[0]();
         const arr q1 = komo.getPath()[1]();
-        // komo.pathConfig.watch(true);
 
         // ensure via sampling as well
         const bool res1 = cp.query(q0)->isFeasible;
@@ -156,6 +139,5 @@ compute_pick_and_place_positions_co(rai::Configuration &C,
       }
     }
   }
-
   return rtpm;
 }

@@ -132,15 +132,6 @@ PlanResult plan_single_arm_given_subsequence_and_prev_plan(    rai::Configuratio
           path.name = "task";
 
           if (path.has_solution) {
-            // if (false) {
-            //   for (uint i = 0; i < path.path.d0; ++i) {
-            //     auto q = path.path[i];
-            //     CPlanner.setJointState(q);
-            //     CPlanner.watch(false);
-            //     rai::wait(0.01);
-            //   }
-            //   CPlanner.setJointState(home_poses.at(robot));
-            // }
             // make animation part
             auto tmp_frames = robot_frames[robot];
             // add obj. frame to the anim-part.
@@ -152,12 +143,6 @@ PlanResult plan_single_arm_given_subsequence_and_prev_plan(    rai::Configuratio
             const auto anim_part =
                 make_animation_part(CPlanner, path.path, tmp_frames, start_time);
             path.anim = anim_part;
-
-            // if (path.t(-1) > best_makespan_so_far) {
-            //   std::cout << "Stopping early due to better prev. path. ("
-            //             << best_makespan_so_far << ")" << std::endl;
-            //   return PlanResult(PlanStatus::aborted);
-            // }
 
             paths[robot].push_back(path);
           } else {
@@ -175,9 +160,7 @@ PlanResult plan_single_arm_given_subsequence_and_prev_plan(    rai::Configuratio
             if (j == 0) {
               auto from = CPlanner[pen_tip];
               auto to = CPlanner[obj];
-
               to->unLink();
-
               // create a new joint
               to->linkFrom(from, true);
               // to->joint->makeRigid();
@@ -186,47 +169,15 @@ PlanResult plan_single_arm_given_subsequence_and_prev_plan(    rai::Configuratio
             if (j == 1) {
               auto to = CPlanner[obj];
               auto from = CPlanner["table_base"];
-
               to->unLink();
-
               // create a new joint
               to->linkFrom(from, true);
-              // to->joint->makeRigid();
             }
-
             // CPlanner.watch(true);
           }
         }
 
         std::cout << "planning exit path" << std::endl;
-
-        // const uint exit_start_time = paths[robot].back().t(-1);
-        // const arr exit_path_start_pose = paths[robot].back().path[-1];
-
-        // rai::Animation A;
-        // for (const auto &p : paths) {
-        //   for (const auto path : p.second) {
-        //     A.A.append(path.anim);
-        //   }
-        // }
-
-        // auto exit_path =
-        //     plan_in_animation(A, CPlanner, exit_start_time, exit_path_start_pose,
-        //                       home_poses.at(robot), exit_start_time, robot, true);
-        // exit_path.r = robot;
-        // exit_path.task_index = task;
-        // exit_path.is_exit = true;
-        // exit_path.name = "exit";
-
-        // if (exit_path.has_solution) {
-        //   const auto exit_anim_part = make_animation_part(
-        //       CPlanner, exit_path.path, robot_frames[robot], exit_start_time);
-        //   exit_path.anim = exit_anim_part;
-        //   paths[robot].push_back(exit_path);
-        // } else {
-        //   std::cout << "Was not able to find an exit path" << std::endl;
-        //   return PlanResult(PlanStatus::failed);
-        // }
       }
         const uint exit_start_time = paths[robot].back().t(-1);
         const arr exit_path_start_pose = paths[robot].back().path[-1];
@@ -678,124 +629,3 @@ PlanResult plan_single_arm_given_sequence(
   return plan_single_arm_given_subsequence_and_prev_plan(
       C, rtpm, sequence, 0, paths, home_poses, best_makespan_so_far);
 }
-
-/*PlanStatus plan_task(rai::Configuration &CPlanner, const robot_task_pair &rtp,
-    const RobotTaskPoseMap &rtpm,
-    const std::map<Robot, FrameL> robot_frames, const uint best_makespan_so_far,
-    const std::map<Robot, arr> &home_poses, const uint prev_finishing_time, Plan
-&paths){
-  // set robots to home pose
-  for (const auto &r : home_poses) {
-    setActive(CPlanner, r.first);
-    CPlanner.setJointState(r.second);
-  }
-
-  // plan for current goal
-  const Robot robot = rtp.first;
-  const uint task = rtp.second;
-
-  // remove exit path
-  if (paths[robot].size() > 0 &&
-      prev_finishing_time < paths[robot].back().t(-1) + 1 + 25) {
-    paths[robot].pop_back();
-  }
-
-  arr start_pose;
-  uint start_time;
-
-  if (paths[robot].size() > 0) {
-    start_pose = paths[robot].back().path[-1];
-    start_time = paths[robot].back().t(-1) + 1;
-  } else {
-    start_pose = home_poses.at(robot);
-    start_time = 0;
-  }
-
-  std::cout << "start time " << start_time << std::endl;
-
-  const arr goal_pose = rtpm.at(robot)[task][0];
-
-  const uint time_lb = std::max({prev_finishing_time, start_time});
-
-  std::cout << "lb " << time_lb << std::endl;
-
-  if (time_lb > start_time && time_lb - start_time > 25) {
-    start_time = time_lb - 25;
-  }
-
-  // make animation from path-parts
-  rai::Animation A;
-  for (const auto &p : paths) {
-    for (const auto path : p.second) {
-      A.A.append(path.anim);
-    }
-  }
-
-  if (false) {
-    for (uint i = 0; i < prev_finishing_time; ++i) {
-      A.setToTime(CPlanner, i);
-      CPlanner.watch(false);
-      rai::wait(0.1);
-    }
-  }
-
-  // set configuration to plannable for current robot
-  std::cout << "setting up C" << std::endl;
-  setActive(CPlanner, robot);
-
-  auto path = plan_in_animation(A, CPlanner, start_time, start_pose,
-                                goal_pose, time_lb, robot, true);
-
-  path.r = robot;
-  path.task_index = task;
-  path.name = "task";
-
-  if (path.has_solution) {
-    if (false) {
-      for (uint i = 0; i < path.path.d0; ++i) {
-        auto q = path.path[i];
-        CPlanner.setJointState(q);
-        CPlanner.watch(false);
-        rai::wait(0.01);
-      }
-      CPlanner.setJointState(home_poses.at(robot));
-    }
-    // make animation part
-    const auto anim_part = make_animation_part(
-        CPlanner, path.path, robot_frames.at(robot), start_time);
-    path.anim = anim_part;
-
-    if (prev_finishing_time > best_makespan_so_far) {
-      std::cout << "Stopping early due to better prev. path. ("
-                << best_makespan_so_far << ")" << std::endl;
-      return PlanStatus::aborted;
-    }
-
-    paths[robot].push_back(path);
-  } else {
-    std::cout << "Was not able to find a path" << std::endl;
-    return PlanStatus::failed;
-  }
-
-  const uint exit_start_time = path.t(-1) + 1;
-
-  auto exit_path =
-      plan_in_animation(A, CPlanner, exit_start_time, goal_pose,
-                        home_poses.at(robot), exit_start_time, robot, true);
-  exit_path.r = robot;
-  exit_path.task_index = task;
-  exit_path.is_exit = true;
-  exit_path.name = "exit";
-
-  if (exit_path.has_solution) {
-    const auto exit_anim_part = make_animation_part(
-        CPlanner, exit_path.path, robot_frames.at(robot), exit_start_time);
-    exit_path.anim = exit_anim_part;
-    paths[robot].push_back(exit_path);
-  } else {
-    std::cout << "Was not able to find an exit path" << std::endl;
-    return PlanStatus::failed;
-  }
-
-  return PlanStatus::success;
-}*/

@@ -31,26 +31,17 @@ arr plan_with_komo_given_horizon(const rai::Animation &A, rai::Configuration &C,
 
   // make pen tip go a way from the table
   const double offset = 0.06;
-  // komo.addObjective({0,2}, FS_vectorZ, {obj}, OT_sos, {1e1}, {0,0,1});
   komo.addObjective({0.1, 0.9}, FS_distance,
                     {"table", STRING(prefix << "pen_tip")}, OT_ineq, {1e1},
                     {-offset});
-  // komo.addObjective({0.1, 0.8}, FS_distance,
-  //                  {"table", STRING(prefix << "pen_tip")}, OT_sos, {1e1});
-
   // position
-  // komo.addObjective({0}, FS_qItself, {}, OT_eq, {1e1}, q0);
   komo.addObjective({1}, FS_qItself, {}, OT_eq, {1e2}, q1);
 
   // speed
-  // komo.addObjective({0.0, 0.05}, FS_qItself, {}, OT_eq, {1e1}, {},
-  //                  1); // slow at beginning
   komo.addObjective({0.95, 1.0}, FS_qItself, {}, OT_eq, {1e1}, {},
                     1); // slow at end
 
   // acceleration
-  // komo.addObjective({0.0, 0.05}, FS_qItself, {}, OT_eq, {1e1}, {},
-  //                  2); // slow at beginning
   komo.addObjective({0.95, 1.0}, FS_qItself, {}, OT_eq, {1e1}, {},
                     2); // slow at end
 
@@ -68,24 +59,10 @@ arr plan_with_komo_given_horizon(const rai::Animation &A, rai::Configuration &C,
   komo.run_prepare(0.01);
   komo.run(options);
   std::cout << "done komo" << std::endl;
-
-  /*if (komo.getReport(false).get<double>("ineq") > 1. ||
-  komo.getReport(false).get<double>("eq") > 1.){ std::cout << "infeasible komo
-  sol, ineq: " << komo.getReport(false).get<double>("ineq")
-      << " eq. " << komo.getReport(false).get<double>("eq") << std::endl;
-    return {};
-  }*/
-
   ineq = komo.getReport(false).get<double>("ineq");
   eq = komo.getReport(false).get<double>("eq");
 
-  // if (eq > 2 || ineq > 2){
   komo.getReport(false);
-  // komo.pathConfig.watch(true);
-  //}
-
-  // komo.pathConfig.watch(true);
-
   // check if the path is actually feasible
   arr path(ts.N, q0.N);
   for (uint j = 0; j < ts.N; ++j) {
@@ -150,10 +127,6 @@ TaskPart plan_in_animation_komo(const rai::Animation &A, rai::Configuration &C,
     LOG(-1) << "q_start is not feasible! This should not happen ";
     start_res->writeDetails(cout, C);
     std::cout << "colliding by " << min(start_res->coll_y) << std::endl;
-
-    // TP.A.setToTime(TP.C, t0);
-    // TP.C.setJointState(q0);
-    // TP.C.watch(true);
 
     return TaskPart();
   }
@@ -483,14 +456,10 @@ TaskPart plan_in_animation(const rai::Animation &A, rai::Configuration &C,
       }
     }
   }
-if (komo_path.has_solution && rrt_path.has_solution) {
-    std::cout<<"komo_size: "<<komo_path.t(-1)<<"  !!!\n\n\n";
-    std::cout<<"rrt_size: "<<rrt_path.t(-1)<<"  !!!\n\n\n";
-}
-// if (rrt_path.has_solution ) {
-//   std::cout << "using rrt!!!!!!!!!!\n\n\n\n" << std::endl;
-//   return rrt_path;
-// }
+  if (komo_path.has_solution && rrt_path.has_solution) {
+      std::cout<<"komo_size: "<<komo_path.t(-1)<<"  !!!\n\n\n";
+      std::cout<<"rrt_size: "<<rrt_path.t(-1)<<"  !!!\n\n\n";
+  }
 
   if (komo_path.has_solution ) {
     std::cout << "using komo" << std::endl;

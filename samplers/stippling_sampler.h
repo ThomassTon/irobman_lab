@@ -9,11 +9,7 @@ arr sampleConfigurationForRobot(KOMO &komo, const arr &point,
   OptOptions options;
   options.stopIters = 100;
   options.damping = 1e-3;
-
   komo.setDiscreteOpt(1);
-
-  // komo.world.stepSwift();
-
   komo.add_collision(true, .01, 1e1);
   komo.add_jointLimits(true, 0., 1e1);
 
@@ -28,9 +24,6 @@ arr sampleConfigurationForRobot(KOMO &komo, const arr &point,
                       {STRING(prefix << "pen"), "world"}, OT_ineq, {1e1},
                       {-cos(15 * 3.1415 / 180.)});
   }
-  // komo.addObjective({1.}, FS_vectorZ, {STRING(prefix << "pen")}, OT_sos,
-  // {1e1}, {0., 0., -1.}); komo.addObjective({1.}, FS_vectorZDiff,
-  // {STRING(prefix << "pen"), "world"}, OT_ineq, {1e1}, {0., 0., -0.9});
   ConfigurationProblem cp(komo.world);
   setActive(cp.C, prefix);
 
@@ -99,12 +92,7 @@ std::vector<arr> computeConfigurationsForPoints(const arr &pts,
     const arr pt = {pts[i](0), pts[i](1), 0.075};
     const arr q = sampleConfigurationForRobot(
         komo, C["table"]->getPosition() + pt, prefix);
-    // const arr q = sampleConfigurationForRobot(C, C["table"]->getPosition() +
-    // pt, prefix);
     configurations.push_back(q);
-
-    // C.setJointState(q);
-    //
     komo.clearObjectives();
     komo.world.setJointState(home);
   }
