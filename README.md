@@ -5,7 +5,7 @@ We assume the use of two robotic arms working collaboratively to perform motion 
 To coordinate the motion planning, we first plan the movement of the first arm and save its waypoints. Then, based on the relative transformation between the two end-effectors, we generate the waypoints for the second arm and use KOMO to follow these waypoints. We designed various test scenarios for this approach, such as object transportation, stacking, and obstacle avoidance, all of which were successfully executed. 
 
 # Installation 
-![sys-vesrion](https://img.shields.io/badge/Ubuntu-20.04-blue)
+![sys-vesrion](https://img.shields.io/badge/Ubuntu-20.04-blue) ![sys-vesrion](https://img.shields.io/badge/C++-red)
 
 The code depends on the code of [rai](https://github.com/vhartman/rai), [rai-robotModels](https://github.com/vhartman/rai-robotModels) and [rai-manip](https://github.com/vhartman/rai-manip).
 

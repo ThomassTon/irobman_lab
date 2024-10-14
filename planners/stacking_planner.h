@@ -267,10 +267,11 @@ PlanResult plan_stacking_arms_collaboration_given_subsequence_and_prev_plan(
           const uint max_start_time_shift = 35 * rtpm.at(robot)[task].size();
           arr start_pose;
           uint start_time;
+
+          // let two arms start at the same timepunkt
           if (paths[robot].size() > 0) {          
             start_pose = paths[robot].back().path[-1];
             start_time = paths[robot].back().t(-1);
-            // let two arm start at the same timepunkt
             if(robot=="a0_"){
               uint max_last_run_time = std::max(paths["a0_"].back().t(-1), paths["a1_"].back().t(-1));  
               start_time = start_time <  max_last_run_time ?  max_last_run_time: start_time;
